@@ -41,7 +41,7 @@ const AttendanceForm = () => {
       const response = await attendanceService.getLastAttendance(rut);
       setLastAttendance(response.attendance);
     } catch (error) {
-      console.error('Error al obtener el último registro de asistencia:', error);
+      console.error('Error fetching last attendance:', error);
     }
   };
 
@@ -56,11 +56,10 @@ const AttendanceForm = () => {
       }));
       setAttendanceRecords(formattedRecords);
     } catch (error) {
-      console.error('Error al obtener registros de asistencia:', error);
-      toast.error('Hubo un error al obtener los registros de asistencia');
+      console.error('Error fetching attendance records:', error);
+      toast.error('Error fetching attendance records.');
     }
   };
-
 
   const fetchWorkHours = async () => {
     try {
@@ -74,8 +73,8 @@ const AttendanceForm = () => {
       setWorkHours(totalHours.toFixed(2));
       setWorkUserInfo(response.user);
     } catch (error) {
-      console.error('Error al calcular las horas trabajadas:', error);
-      toast.error('Hubo un error al calcular las horas trabajadas');
+      console.error('Error calculating work hours:', error);
+      toast.error('Error calculating work hours.');
     }
   };
 
@@ -84,10 +83,10 @@ const AttendanceForm = () => {
     try {
       const response = await attendanceService.checkIn(rut, overrideAdmin);
       setLastAttendance(response.attendance);
-      toast.success('Check-in registrado exitosamente');
+      toast.success('Check-in registered successfully');
     } catch (error) {
-      console.error('Error al registrar check-in:', error);
-      toast.error('Hubo un error al registrar el check-in');
+      console.error('Error registering check-in:', error);
+      toast.error('Error registering check-in.');
     } finally {
       setIsWaiting(false);
     }
@@ -98,10 +97,10 @@ const AttendanceForm = () => {
     try {
       const response = await attendanceService.checkOut(rut, overrideAdmin);
       setLastAttendance(response.attendance);
-      toast.success('Check-out registrado exitosamente');
+      toast.success('Check-out registered successfully');
     } catch (error) {
-      console.error('Error al registrar check-out:', error);
-      toast.error('Hubo un error al registrar el check-out');
+      console.error('Error registering check-out:', error);
+      toast.error('Error registering check-out.');
     } finally {
       setIsWaiting(false);
     }
@@ -119,18 +118,18 @@ const AttendanceForm = () => {
     try {
       const doc = new jsPDF();
       const { rut, username, email, photoUrl } = workUserInfo;
- 
+
       doc.addImage(getPhotoUrl(photoUrl), 'JPEG', 10, 10, 30, 30);
       doc.setFontSize(12);
       doc.text(`RUT: ${rut}`, 10, 50);
-      doc.text(`Nombre: ${username}`, 10, 60);
+      doc.text(`Name: ${username}`, 10, 60);
       doc.text(`Email: ${email}`, 10, 70);
-      doc.text(`Horas Trabajadas: ${workHours} horas`, 10, 80);
+      doc.text(`Worked Hours: ${workHours} hours`, 10, 80);
 
       doc.setFontSize(14);
-      doc.text('Registros de Asistencia:', 10, 100);
+      doc.text('Attendance Records:', 10, 100);
 
-      const tableColumn = ['Fecha', 'Check-in', 'Check-out'];
+      const tableColumn = ['Date', 'Check-in', 'Check-out'];
       const tableRows = [];
 
       attendanceRecords.forEach(record => {
@@ -149,22 +148,22 @@ const AttendanceForm = () => {
         theme: 'grid'
       });
 
-      doc.save('informe_asistencia.pdf');
-      toast.success('Informe PDF generado exitosamente');
+      doc.save('attendance_report.pdf');
+      toast.success('PDF report generated successfully');
     } catch (error) {
-      console.error('Error al generar el informe PDF:', error);
-      toast.error('Hubo un error al generar el informe PDF');
+      console.error('Error generating PDF report:', error);
+      toast.error('Error generating PDF report.');
     }
   };
 
-
   return (
-    <div className="grid grid-cols-2 gap-4 ">
-      <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10  flex flex-col h-full">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-4 md:px-12 lg:px-24">
+      {/* Registrar asistencia section */}
+      <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10 flex flex-col h-full">
         <table className="w-full table-fixed flex-grow">
           <thead>
             <tr className="bg-gray-100">
-              <th className="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Registrar Asistencia</th>
+              <th className="py-4 px-6 text-left text-gray-600 font-bold uppercase">Registrar Asistencia</th>
             </tr>
           </thead>
           <tbody className="bg-white flex-grow">
@@ -177,13 +176,13 @@ const AttendanceForm = () => {
                     value={rut}
                     onChange={(e) => setRut(e.target.value)}
                     required
-                    className="p-2 mb-4 text-black border border-gray-300 rounded w-full bg-white "
+                    className="p-2 mb-4 text-black border border-gray-300 rounded w-full bg-white"
                   />
                 </div>
                 {user.roles.some(role => role.name === 'admin') && (
                   <div className="mb-4 flex items-center justify-center">
-                    <label className="mr-2 text-black ">Registro manual:</label>
-                    <label className="switch ">
+                    <label className="mr-2 text-black">Registro manual:</label>
+                    <label className="switch">
                       <input
                         type="checkbox"
                         checked={overrideAdmin}
@@ -193,9 +192,9 @@ const AttendanceForm = () => {
                     </label>
                   </div>
                 )}
-                <div className="mb-4 flex justify-center w-full">
-                  <button onClick={handleCheckIn} className="custom-button bg-blue-500 text-white px-4 py-2 mr-2">Registrar Check-in</button>
-                  <button onClick={handleCheckOut} className="custom-button bg-red-500 text-white px-4 py-2">Registrar Check-out</button>
+                <div className="mb-4 flex flex-col sm:flex-row justify-center items-center w-full space-y-2 sm:space-y-0 sm:space-x-2">
+                  <button onClick={handleCheckIn} className="custom-button bg-blue-500 text-white px-4 py-2 flex-grow min-w-[80px]">Registrar Entrada</button>
+                  <button onClick={handleCheckOut} className="custom-button bg-red-500 text-white px-4 py-2 flex-grow min-w-[80px]">Registrar Salida</button>
                 </div>
                 {isWaiting && (
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 rounded">
@@ -208,39 +207,42 @@ const AttendanceForm = () => {
           </tbody>
         </table>
       </div>
-      <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10 h-full flex flex-col">
-      <table className="w-full table-fixed flex-grow">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="py-4 px-6 text-left text-gray-600 font-bold uppercase w-full">Último Registro</th>
-          </tr>
-        </thead>
-        <tbody className="bg-white flex-grow">
-          <tr>
-            <td className="py-4 px-6 border-b border-gray-200 h-full">
-              <div className="bg-white p-4 rounded shadow-md text-gray-700 text-center w-full h-full flex flex-col justify-center">
-                {lastAttendance.photoUrl && (
-                  <div className="mb-4">
-                    <img src={getPhotoUrl(lastAttendance.photoUrl)} alt="Foto del usuario" className="w-24 h-24 rounded-full mx-auto" />
-                  </div>
-                )}
-                <p><strong>RUT:</strong> {rut}</p>
-                <p><strong>Check-in:</strong> {formatDateTime(lastAttendance.checkIn)}</p>
-                <p><strong>Check-out:</strong> {formatDateTime(lastAttendance.checkOut)}</p>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+
+      {/* Último registro section */}
+      <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10 flex flex-col h-full">
+        <table className="w-full table-fixed flex-grow">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="py-4 px-6 text-left text-gray-600 font-bold uppercase">Último Registro</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white flex-grow">
+            <tr>
+              <td className="py-4 px-6 border-b border-gray-200 h-full">
+                <div className="bg-white p-4 rounded shadow-md text-gray-700 text-center w-full h-full flex flex-col justify-center">
+                  {lastAttendance.photoUrl && (
+                    <div className="mb-4">
+                      <img src={getPhotoUrl(lastAttendance.photoUrl)} alt="Foto del usuario" className="w-16 h-16 sm:w-12 sm:h-12 md:w-24 md:h-24 lg:w-32 lg:h-32 rounded-full mx-auto" />
+                    </div>
+                  )}
+                  <p><strong>RUT:</strong> {rut}</p>
+                  <p><strong>Check-in:</strong> {formatDateTime(lastAttendance.checkIn)}</p>
+                  <p><strong>Check-out:</strong> {formatDateTime(lastAttendance.checkOut)}</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       {user.roles.some(role => role.name === 'admin') && (
         <>
-          <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10 col-span-1">
+          {/* Registros de asistencia section */}
+          <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10">
             <table className="w-full table-fixed">
               <thead>
                 <tr className="bg-gray-100">
-                  <th className="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Registros de Asistencia</th>
+                  <th className="py-4 px-6 text-left text-gray-600 font-bold uppercase">Registros de Asistencia</th>
                 </tr>
               </thead>
               <tbody className="bg-white">
@@ -261,23 +263,23 @@ const AttendanceForm = () => {
                         type="date"
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
-                        className="p-2 mb-4 text-black border border-gray-300 rounded w-full bg-white date-input"
+                        className="p-2 mb-4 text-black border border-gray-300 rounded w-full bg-white"
                       />
                     </div>
                     <div className="w-full mb-4">
-                      <label className="block mb-2 text-black ">Fecha de Fin:</label>
+                      <label className="block mb-2 text-black">Fecha de Fin:</label>
                       <input
                         type="date"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
-                        className="p-2 mb-4 text-black border border-gray-300 rounded w-full bg-white date-input"
+                        className="p-2 mb-4 text-black border border-gray-300 rounded w-full bg-white"
                       />
                     </div>
                     <div className="flex justify-center w-full">
                       <button onClick={fetchAttendanceRecords} className="custom-button bg-green-500 text-white px-4 py-2 mb-4 mr-2">Buscar Registros</button>
                       <button onClick={fetchWorkHours} className="custom-button bg-blue-500 text-white px-4 py-2 mb-4">Horas Trabajadas</button>
                     </div>
-                    <div className="rounded w-full overflow-y-auto h-64">
+                    <div className="overflow-x-auto rounded w-full overflow-y-auto h-64">
                       {attendanceRecords.length > 0 ? (
                         <table className="min-w-full bg-white border border-gray-300 ">
                           <thead>
@@ -296,7 +298,6 @@ const AttendanceForm = () => {
                               </tr>
                             ))}
                           </tbody>
-
                         </table>
                       ) : (
                         <p className="text-black">No se encontraron registros</p>
@@ -307,11 +308,13 @@ const AttendanceForm = () => {
               </tbody>
             </table>
           </div>
-          <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10 col-span-1 flex flex-col h-full">
+
+          {/* Horas trabajadas section */}
+          <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10 h-full flex flex-col">
             <table className="w-full table-fixed flex-grow">
               <thead>
                 <tr className="bg-gray-100">
-                  <th className="py-4 px-6 text-left text-gray-600 font-bold uppercase w-full">Horas Trabajadas</th>
+                  <th className="py-4 px-6 text-left text-gray-600 font-bold uppercase">Horas Trabajadas</th>
                 </tr>
               </thead>
               <tbody className="bg-white flex-grow">
@@ -320,7 +323,7 @@ const AttendanceForm = () => {
                     <div className="bg-white p-4 rounded shadow-md text-gray-700 text-center w-full h-full flex flex-col justify-center">
                       {workUserInfo && workUserInfo.photoUrl && (
                         <div className="mb-4">
-                          <img src={getPhotoUrl(workUserInfo.photoUrl)} alt="Foto del usuario" className="w-24 h-24 rounded-full mx-auto" />
+                          <img src={getPhotoUrl(workUserInfo.photoUrl)} alt="Foto del usuario" className="w-16 h-16 sm:w-12 sm:h-12 md:w-24 md:h-24 lg:w-32 lg:h-32 rounded-full mx-auto" />
                         </div>
                       )}
                       <p><strong>RUT:</strong> {workUserInfo.rut}</p>
@@ -336,8 +339,6 @@ const AttendanceForm = () => {
               </tbody>
             </table>
           </div>
-
-
         </>
       )}
     </div>

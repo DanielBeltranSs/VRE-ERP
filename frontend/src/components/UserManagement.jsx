@@ -66,7 +66,6 @@ const UserManagement = () => {
   };
 
   const handleEditUser = async () => {
-    console.log('Editando usuario:', editingUser);
     try {
       const { _id, username, rut, email, password, newPassword, roles } = editingUser;
       const userData = { username, rut, email, password, newPassword, roles };
@@ -145,12 +144,13 @@ const UserManagement = () => {
   );
 
   return (
-    <div className="user-management p-6 bg-white rounded shadow-md grid grid-cols-2 gap-4">
+    <div className="user-management p-6 bg-white rounded shadow-md grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* Agregar usuario */}
       <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10">
         <table className="w-full table-fixed">
           <thead>
             <tr className="bg-gray-200">
-              <th className="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Agregar Usuario</th>
+              <th className="w-1/4 py-4 px-6 text-center text-gray-600 font-bold uppercase">Agregar Usuario</th>
             </tr>
           </thead>
           <tbody className="bg-white">
@@ -215,66 +215,69 @@ const UserManagement = () => {
         </table>
       </div>
 
+      {/* Lista de usuarios */}
       <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10">
-        <table className="w-full table-fixed">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Lista de Usuarios</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white">
-            <tr>
-              <td className="py-4 px-6 border-b border-gray-200">
-                <input
-                  type="text"
-                  placeholder="Buscar por RUT"
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  className="p-2 border border-gray-300 rounded mb-2 w-full text-black bg-white"
-                />
-                <div className="overflow-y-auto h-64">
-                  <ul className="space-y-2">
-                    {filteredUsers.map(user => (
-                      <li key={user._id} className="p-2 border border-gray-300 rounded flex justify-between items-center">
-                        <div className="text-black">
-                          <span className="font-medium">{user.username}</span> - <span>{user.rut}</span>
-                        </div>
-                        <div className="flex space-x-2">
-                          <button 
-                            onClick={() => setEditingUser({ ...user, password: '', newPassword: '' })} 
-                            className="bg-yellow-500 text-white p-2 rounded custom-button"
-                          >
-                            Editar
-                          </button>
-                          <button 
-                            onClick={() => handleDeleteUser(user._id)} 
-                            className="bg-red-500 text-white p-2 rounded custom-button"
-                          >
-                            Eliminar
-                          </button>
-                          <button 
-                            onClick={() => setEnrollingUser(user)} 
-                            className="bg-green-500 text-white p-2 rounded custom-button"
-                          >
-                            Enroll
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <table className="w-full table-fixed">
+    <thead>
+      <tr className="bg-gray-200">
+        <th className="w-1/4 py-4 px-6 text-center text-gray-600 font-bold uppercase">Lista de Usuarios</th>
+      </tr>
+    </thead>
+    <tbody className="bg-white">
+      <tr>
+        <td className="py-4 px-6 border-b border-gray-200">
+          <input
+            type="text"
+            placeholder="Buscar por RUT"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="p-2 border border-gray-300 rounded mb-2 w-full text-black bg-white"
+          />
+          <div className="overflow-y-auto h-64">
+            <ul className="space-y-4">
+              {filteredUsers.map(user => (
+                <li key={user._id} className="p-2 border border-gray-300 rounded flex flex-col items-center justify-center space-y-2">
+                  <div className="text-black text-center">
+                    <span className="font-medium">{user.username}</span> - <span>{user.rut}</span>
+                  </div>
+                  <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row md:space-x-4 justify-center">
+                    <button 
+                      onClick={() => setEditingUser({ ...user, password: '', newPassword: '' })} 
+                      className="bg-yellow-500 text-white p-2 rounded custom-button w-full md:w-auto"
+                    >
+                      Editar
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteUser(user._id)} 
+                      className="bg-red-500 text-white p-2 rounded custom-button w-full md:w-auto"
+                    >
+                      Eliminar
+                    </button>
+                    <button 
+                      onClick={() => setEnrollingUser(user)} 
+                      className="bg-green-500 text-white p-2 rounded custom-button w-full md:w-auto"
+                    >
+                      Enroll
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
+
+      {/* Editar Usuario */}
       {editingUser._id && (
         <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10">
           <table className="w-full table-fixed">
             <thead>
               <tr className="bg-gray-200">
-                <th className="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Editar Usuario</th>
+                <th className="w-1/4 py-4 px-6 text-center text-gray-600 font-bold uppercase">Editar Usuario</th>
               </tr>
             </thead>
             <tbody className="bg-white">
@@ -351,6 +354,7 @@ const UserManagement = () => {
         </div>
       )}
 
+      {/* Enroll Huella */}
       {enrollingUser && (
         <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10">
           <table className="w-full table-fixed">

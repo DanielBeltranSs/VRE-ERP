@@ -2,11 +2,13 @@ import React from 'react';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <h1 className="text-3xl font-bold text-gray-700 mb-6">Bienvenido al Sistema de Planificación de Recursos Empresariales (ERP)</h1>
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-700 mb-6 text-center">
+        Bienvenido al Sistema de Planificación de Recursos Empresariales (ERP)
+      </h1>
 
-      <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Presentación del Software</h2>
+      <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 mb-6 max-w-4xl mx-auto">
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Presentación del Software</h2>
         <p className="text-gray-600 mb-4">
           Nuestro sistema ERP está diseñado para mejorar la organización y gestión de los recursos de su empresa constructora, proporcionando una solución para la planificación de proyectos, gestión de personal y comunicación interna.
         </p>
@@ -15,8 +17,8 @@ function App() {
         </p>
       </div>
 
-      <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Características Principales</h2>
+      <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 mb-6 max-w-4xl mx-auto">
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Características Principales</h2>
         <ul className="list-disc list-inside text-gray-600">
           <li>Gestión de Proyectos: Planificación, seguimiento y finalización de proyectos.</li>
           <li>Recursos Humanos: Gestión de asistencia y asignaciones de personal.</li>

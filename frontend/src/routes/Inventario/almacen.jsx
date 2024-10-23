@@ -8,6 +8,7 @@ const Almacen = () => {
     const navigate = useNavigate();
     const [almacen, setAlmacen] = useState([]);
     const [modalIsOpen, setModalIsOpen] = useState(false);
+
     useEffect(() => {
         fetchAlmacenData();
     }, []);
@@ -23,8 +24,6 @@ const Almacen = () => {
         }
     };
 
-
-
     const openModal = () => {
         setModalIsOpen(true);
     };
@@ -35,43 +34,58 @@ const Almacen = () => {
     };
 
     return (
-        <div className='text-gray-700'>
+        <div className="text-gray-700">
             <div className="text-center mb-4 text-gray-800">
                 <h2 className="text-lg font-bold">Almacenes Registrados</h2>
             </div>
-            <div className="p-2 justify-between flex">
+            <div className="p-2 flex justify-between">
                 <div></div>
-                <button onClick={openModal} className=' py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-violet-500 flex'
-                >Agregar Almacen</button>
+                <button 
+                    onClick={openModal} 
+                    className="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-500"
+                >
+                    Agregar Almacen
+                </button>
             </div>
             <ModalAlmacen isOpen={modalIsOpen} onClose={closeModal} />
             <div>
-                <div class="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10">
-                    <table class="w-full table-fixed">
+                {/* Añadimos overflow-x-auto para la tabla en pantallas pequeñas */}
+                <div className="shadow-lg rounded-lg overflow-x-auto mx-4 md:mx-10">
+                    <table className="w-full table-auto">
                         <thead>
-                            <tr class="bg-gray-200">
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Nombre</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Ubicacion</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Fono</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Acciones</th>
+                            <tr className="bg-gray-200 text-xs md:text-sm">
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Nombre</th>
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Ubicación</th>
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Fono</th>
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white">
+                        <tbody className="bg-white text-xs md:text-sm">
                             {almacen && almacen.length > 0 ? (
                                 almacen.map((item) => (
-                                <tr key={item.id}>
-                                    <td class="py-4 px-6 border-b border-gray-200">{item.nombre}</td>
-                                        <td class="py-4 px-6 border-b border-gray-200 truncate">{ item.ubicacion}</td>
-                                        <td class="py-4 px-6 border-b border-gray-200">{ item.fono}</td>
-                                    <td class="py-4 px-6 border-b border-gray-200">
-                                        <button onClick={() => navigate(`/inventario/almacen/editar/${item._id}`)} class="bg-gray-500 py-1 px-2 rounded-md">
-                                                <img className='w-5 h-5' src={`${import.meta.env.VITE_BASE_URL}/uploads/editar.png`} alt="" />
-                                        </button>
-                                    </td>
-                                </tr>
+                                    <tr key={item.id} className="border-b border-gray-200">
+                                        <td className="py-2 md:py-4 px-2 md:px-6">{item.nombre}</td>
+                                        <td className="py-2 md:py-4 px-2 md:px-6 truncate">{item.ubicacion}</td>
+                                        <td className="py-2 md:py-4 px-2 md:px-6">{item.fono}</td>
+                                        <td className="py-2 md:py-4 px-2 md:px-6">
+                                            <div className="flex space-x-2">
+                                                <button 
+                                                    onClick={() => navigate(`/inventario/almacen/editar/${item._id}`)} 
+                                                    className="bg-gray-500 py-1 px-2 rounded-md" 
+                                                    title="Editar Almacen"
+                                                >
+                                                    <img className="w-5 h-5" src={`${import.meta.env.VITE_BASE_URL}/uploads/editar.png`} alt="Editar" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 ))
                             ) : (
-                                <p>No existe Almacen. Registre un Almacen para el Inventario.</p>
+                                <tr>
+                                    <td colSpan="4" className="py-4 text-center font-semibold text-gray-600">
+                                        No existe Almacen. Registre un Almacen para el Inventario.
+                                    </td>
+                                </tr>
                             )}
                         </tbody>
                     </table>
@@ -80,6 +94,5 @@ const Almacen = () => {
         </div>
     );
 };
-
 
 export default Almacen;

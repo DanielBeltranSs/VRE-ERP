@@ -12,7 +12,7 @@ const EditarInventario = () => {
     const navigate = useNavigate();
     const [almacen, setAlmacen] = useState([]);
     const [material, setMaterial] = useState([]);
-    const [inventario, setinventario] = useState({
+    const [inventario, setInventario] = useState({
         material: '',
         cantidad: 0,
         almacen: '',
@@ -36,7 +36,7 @@ const EditarInventario = () => {
         } catch (error) {
             console.error('Error fetching almacen data:', error);
         }
-    }
+    };
 
     const fetchMaterialData = async () => {
         try {
@@ -46,7 +46,7 @@ const EditarInventario = () => {
         } catch (error) {
             console.error('Error fetching material data:', error);
         }
-    }
+    };
 
     const obtenerInventarioSeleccionado = async (inventarioId) => {
         try {
@@ -58,7 +58,7 @@ const EditarInventario = () => {
                 almacen: response.data.almacen._id,
                 usuarioIngreso: response.data.usuarioIngreso,
             };
-            setinventario(newI);
+            setInventario(newI);
         } catch (error) {
             console.error('Error al obtener los detalles del inventario', error);
             navigate('/inventario');
@@ -66,15 +66,14 @@ const EditarInventario = () => {
     };
 
     const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setinventario({ ...inventario, [name]: value });
+        const { name, value } = e.target;
+        setInventario({ ...inventario, [name]: value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         try {
-            
             const newInventario = {
                 material: inventario.material,
                 cantidad: inventario.cantidad,
@@ -82,10 +81,10 @@ const EditarInventario = () => {
                 usuarioIngreso: user.email,
             };
 
-            await updateInventario(id,newInventario);
+            await updateInventario(id, newInventario);
             toast.success('Inventario modificado exitosamente');
             navigate('/inventario');
-            setinventario({
+            setInventario({
                 material: '',
                 cantidad: 0,
                 almacen: '',
@@ -98,73 +97,72 @@ const EditarInventario = () => {
     };
 
     return (
-        <div>
-            <div className="">
-                
-                <div className='flex'>
-                    <h1 className="text-2xl font-bold text-blue-900 ">Registrar Inventario</h1>
+        <div className="flex justify-center items-center min-h-screen bg-gray-100">
+            <div className="w-full max-w-xl bg-white shadow-lg rounded-lg p-6">
+                <div className="mb-6 text-gray-800">
+                    <h1 className="text-2xl font-bold text-center text-gray-900">Editar Inventario</h1>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Material o Herramienta</label>
-                    <select
-                    type="text"
-                    id='material'
-                    name='material'
-                    value={inventario.material}
-                    onChange={(e) => handleInputChange(e)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700"
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Material o Herramienta</label>
+                        <select
+                            id="material"
+                            name="material"
+                            value={inventario.material}
+                            onChange={handleInputChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700"
                         >
-                            <option value=''>Seleccione una opción</option>
+                            <option value="">Seleccione una opción</option>
                             {material.map((item) => (
-                                <option key={item._id} value={item._id}>{item.nombre} | Esta opcion se cuantifica por: { item.unidad}</option>
+                                <option key={item._id} value={item._id}>
+                                    {item.nombre} | Esta opción se cuantifica por: {item.unidad}
+                                </option>
                             ))}
-                    </select>
+                        </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Descripcion</label>
+                        <label className="block text-sm font-medium text-gray-700">Descripción</label>
                         <p className="mt-1 min-h-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700">
                             {inventarioSeleccionado.material ? inventarioSeleccionado.material.descripcion : ''}
                         </p>
                     </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Cantidad</label>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Cantidad</label>
                         <input
                             type="number"
-                            id='cantidad'
-                            name='cantidad'
+                            id="cantidad"
+                            name="cantidad"
                             min={0}
                             value={inventario.cantidad}
-                            onChange={(e) => handleInputChange(e)}
-                            className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none  bg-gray-300 text-gray-700"
-                    />
+                            onChange={handleInputChange}
+                            className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-300 text-gray-700"
+                        />
                     </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Almacen</label>
-                    <select
-                    type="text"
-                    id='almacen'
-                    name='almacen'
-                    value={inventario.almacen}
-                    onChange={(e) => handleInputChange(e)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700"
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Almacén</label>
+                        <select
+                            id="almacen"
+                            name="almacen"
+                            value={inventario.almacen}
+                            onChange={handleInputChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700"
                         >
-                            <option value=''>Seleccione una opción</option>
+                            <option value="">Seleccione una opción</option>
                             {almacen.map((almacen) => (
-                                <option key={almacen._id} value={almacen._id}>{almacen.nombre}</option>
+                                <option key={almacen._id} value={almacen._id}>
+                                    {almacen.nombre}
+                                </option>
                             ))}
-                    </select>
-                </div>
-                <button
-                    type="submit"
-                    className="flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        </select>
+                    </div>
+                    <button
+                        type="submit"
+                        className="flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                    Modificar
-                </button>
+                        Modificar
+                    </button>
                 </form>
-                
             </div>
-            
         </div>
     );
 };

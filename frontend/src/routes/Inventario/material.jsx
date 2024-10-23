@@ -32,56 +32,69 @@ const Material = () => {
     };
 
     return (
-        <div className='text-gray-700 '>
-
+        <div className="text-gray-700 p-4">
             <div className="text-center mb-4 text-gray-800">
                 <h2 className="text-lg font-bold">Herramientas y Materiales</h2>
             </div>
-            <div className="p-2 justify-between flex">
-                <div></div>
-                <button onClick={openModal} className=' py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-violet-500 flex'
-                >Registar Material</button>
-            </div>
-            
-            <ModalAddMaterial isOpen={modalIsOpen} onClose={closeModal} />
-            <div>
-                <div class="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10">
-                    <table class="w-full table-fixed">
-                        <thead>
-                            <tr class="bg-gray-200">
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Nombre</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Descripcion</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Tipo</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Unidad de Medida</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white">
-                            {material && material.length > 0 ? (
-                                material.map((item) => (
-                                <tr key={item.id}>
-                                    <td class="py-4 px-6 border-b border-gray-200">{item.nombre}</td>
-                                        <td class="py-4 px-6 border-b border-gray-200">{ item.descripcion}</td>
-                                        <td class="py-4 px-6 border-b border-gray-200">{item.tipo}</td>
-                                        <td class="py-4 px-6 border-b border-gray-200">{item.unidad}</td>
-                                    <td class="py-4 px-6 border-b border-gray-200">
 
-                                        <button onClick={() => navigate(`/inventario/material/editar/${item._id}`)} className="bg-gray-600 py-1 px-2 rounded-md">
-                                            <img className='w-5 h-5' src={`${import.meta.env.VITE_BASE_URL}/uploads/editar.png`} alt="" />
-                                        </button>
+            <div className="flex justify-end mb-4">
+                <button 
+                    onClick={openModal} 
+                    className="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-500 hover:bg-violet-600 transition-all"
+                >
+                    Registrar Material
+                </button>
+            </div>
+
+            <ModalAddMaterial isOpen={modalIsOpen} onClose={closeModal} />
+
+            {/* Aquí hacemos la tabla desplazable en pantallas pequeñas */}
+            <div className="shadow-lg rounded-lg overflow-x-auto">
+                <table className="min-w-full table-auto">
+                    <thead>
+                        <tr className="bg-gray-200">
+                            <th className="py-4 px-6 text-left text-gray-600 font-bold uppercase">Nombre</th>
+                            <th className="py-4 px-6 text-left text-gray-600 font-bold uppercase">Descripción</th>
+                            <th className="py-4 px-6 text-left text-gray-600 font-bold uppercase">Tipo</th>
+                            <th className="py-4 px-6 text-left text-gray-600 font-bold uppercase">Unidad de Medida</th>
+                            <th className="py-4 px-6 text-left text-gray-600 font-bold uppercase">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody className="bg-white">
+                        {material && material.length > 0 ? (
+                            material.map((item) => (
+                                <tr key={item._id}>
+                                    <td className="py-4 px-6 border-b border-gray-200">{item.nombre}</td>
+                                    <td className="py-4 px-6 border-b border-gray-200">{item.descripcion}</td>
+                                    <td className="py-4 px-6 border-b border-gray-200">{item.tipo}</td>
+                                    <td className="py-4 px-6 border-b border-gray-200">{item.unidad}</td>
+                                    <td className="py-4 px-6 border-b border-gray-200 text-center">
+                                    <button 
+                                        onClick={() => navigate(`/inventario/material/editar/${item._id}`)} 
+                                        className="bg-gray-600 hover:bg-gray-500 transition-all py-1 px-2 rounded-md flex justify-center items-center mx-auto"
+                                    >
+                                        <img 
+                                            className="w-5 h-5" 
+                                            src={`${import.meta.env.VITE_BASE_URL}/uploads/editar.png`} 
+                                            alt="Editar" 
+                                        />
+                                    </button>
                                 </td>
+
                                 </tr>
-                                ))
-                            ) : (
-                                <p>No hay Materiales o herramientas registradas.</p>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="5" className="text-center py-4 text-gray-600">
+                                    No hay Materiales o Herramientas registradas.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
-}
-
+};
 
 export default Material;

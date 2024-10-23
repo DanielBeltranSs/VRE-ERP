@@ -3,8 +3,7 @@ import Modal from 'react-modal';
 import { sumarInventario, getInventarioById } from '../../services/inventario.service';
 import { toast } from 'react-toastify';
 
-
-const ModalAddCantidad = ({ isOpen, onClose , id}) => {
+const ModalAddCantidad = ({ isOpen, onClose, id }) => {
     const [material, setMaterial] = useState({
         nombre: '',
         descripcion: '',
@@ -47,25 +46,21 @@ const ModalAddCantidad = ({ isOpen, onClose , id}) => {
         e.preventDefault();
         try {
             await sumarInventario(id, cantidad);
-            toast.success('Material/Herramienta creado con éxito');
+            toast.success('Material/Herramienta sumado con éxito');
             onClose();
-            setCantidad({
-                cantidad: 0,
-            });
+            setCantidad({ cantidad: 0 });
         } catch (error) {
             console.error('Error al sumar Material/Herramienta:', error);
             toast.error('Error al sumar Material/Herramienta');
         }
     };
 
-
-
     return (
         <Modal
             isOpen={isOpen}
             onRequestClose={onClose}
             contentLabel="Agregar Cantidad de Material/Herramienta"
-            className={'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-2xl rounded-md p-5 w-1/3'}
+            className={'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-2xl rounded-md p-5 w-full max-w-md'}
         >
             <div className="flex justify-between items-center mb-4 text-gray-800">
                 <h2 className="text-lg font-bold">Agregar Cantidad</h2>
@@ -78,13 +73,13 @@ const ModalAddCantidad = ({ isOpen, onClose , id}) => {
                         id='nombre'
                         name='nombre'
                         value={material.nombre}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-gray-100 text-gray-700 rounded-md shadow-sm "
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-gray-100 text-gray-700 rounded-md shadow-sm"
                         autoComplete='off'
-                        disabled 
+                        disabled
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Descripcion</label>
+                    <label className="block text-sm font-medium text-gray-700">Descripción</label>
                     <input
                         type="text"
                         id='descripcion'
@@ -95,23 +90,22 @@ const ModalAddCantidad = ({ isOpen, onClose , id}) => {
                         disabled
                     />
                 </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Tipo</label>
-                        <select
-                            type="text"
-                            id='tipo'
-                            name='tipo'
-                            value={material.tipo}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
-                            disabled
-                        >
-                            <option value="">Seleccionar tipo de material</option>
-                            <option value="material">Material</option>
-                            <option value="herramienta">Herramienta</option>
-                        </select>
-                    </div>
-                <div className='flex gap-4'>
-                    <div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Tipo</label>
+                    <select
+                        id='tipo'
+                        name='tipo'
+                        value={material.tipo}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
+                        disabled
+                    >
+                        <option value="">Seleccionar tipo de material</option>
+                        <option value="material">Material</option>
+                        <option value="herramienta">Herramienta</option>
+                    </select>
+                </div>
+                <div className='flex flex-col md:flex-row md:gap-4'>
+                    <div className="w-full md:w-1/2">
                         <label className="block text-sm font-medium text-gray-700">Cantidad Actual</label>
                         <input
                             type="number"
@@ -122,7 +116,7 @@ const ModalAddCantidad = ({ isOpen, onClose , id}) => {
                             disabled
                         />
                     </div>
-                    <div>
+                    <div className="w-full md:w-1/2">
                         <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
                         <select
                             id='unidad'
@@ -139,34 +133,33 @@ const ModalAddCantidad = ({ isOpen, onClose , id}) => {
                             <option value="caja">Caja</option>
                             <option value="metro">Metro</option>
                             <option value="rollo">Rollo</option>
-                            <option value="galon">Galon</option>
+                            <option value="galon">Galón</option>
                             <option value="pieza">Pieza</option>
                             <option value="docena">Docena</option>
                             <option value="paquete">Paquete</option>
                             <option value="saco">Saco</option>
                             <option value="barril">Barril</option>
                             <option value="tonelada">Tonelada</option>
-                            <option value="otro">Metro cubico</option>
+                            <option value="otro">Metro cúbico</option>
                         </select>
                     </div>
-
                 </div>
                 <div>
-                        <label className="block text-sm font-medium text-gray-700">Cantidad a Agregar</label>
-                        <input
-                            type="number"
-                            id='cantidad'
-                            name='cantidad'
-                            value={cantidad.cantidad}
-                        onChange={(e) => handleInputChange(e)}
+                    <label className="block text-sm font-medium text-gray-700">Cantidad a Agregar</label>
+                    <input
+                        type="number"
+                        id='cantidad'
+                        name='cantidad'
+                        value={cantidad.cantidad}
+                        onChange={handleInputChange}
                         min={1}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
-                        />
-                    </div>
-                <div>
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
+                    />
+                </div>
+                <div className="flex justify-end gap-4">
                     <button
                         type="submit"
-                        className="bg-gray-700 hover:bg-gray-500 text-white py-2 px-4 rounded-md mr-2"
+                        className="bg-gray-700 hover:bg-gray-500 text-white py-2 px-4 rounded-md"
                     >
                         Agregar
                     </button>
@@ -177,10 +170,7 @@ const ModalAddCantidad = ({ isOpen, onClose , id}) => {
                         Cancelar
                     </button>
                 </div>
-
-
             </form>
-            
         </Modal>
     );
 };

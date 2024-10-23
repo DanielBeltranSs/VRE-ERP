@@ -15,7 +15,6 @@ const EditarMaterial = () => {
     
     const handleUpdate = (e) => {
         const shouldUpdate = window.confirm('¿Estás seguro de que deseas editar?');
-
         if (shouldUpdate) {
             handleSubmit(e);
         }
@@ -25,19 +24,18 @@ const EditarMaterial = () => {
         if (id) {
             obtenerMaterialSeleccionado(id);
         }
-    }, []);
-
+    }, [id]);
 
     const obtenerMaterialSeleccionado = async (materialId) => {
         try {
             const response = await getMaterialById(materialId);
-            const newI = {
+            const newMaterial = {
                 nombre: response.data.nombre,
                 descripcion: response.data.descripcion,
                 tipo: response.data.tipo,
                 unidad: response.data.unidad,
             };
-            setMaterial(newI);
+            setMaterial(newMaterial);
         } catch (error) {
             console.error('Error al obtener los detalles del material', error);
             toast.error('Hubo un error al obtener los detalles del material');
@@ -46,16 +44,14 @@ const EditarMaterial = () => {
     };
 
     const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setMaterial({ ...material, [name]: value });
+        const { name, value } = e.target;
+        setMaterial({ ...material, [name]: value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
         try {
-
-            await updateMaterial(id,material);
+            await updateMaterial(id, material);
             toast.success('Material modificado exitosamente');
             navigate('/inventario/material');
             setMaterial({
@@ -65,51 +61,49 @@ const EditarMaterial = () => {
                 unidad: '',
             });
         } catch (error) {
-            console.error('Error al modificar el almacen:', error);
-            toast.error('Error:', error.response.data.message);
+            console.error('Error al modificar el material:', error);
+            toast.error('Hubo un error al modificar el material');
         }
     };
 
     return (
-        <div>
-            <div className="">
-            <div className="flex justify-between items-center mb-4 text-gray-800">
+        <div className="p-4">
+            <div className="mb-4 text-gray-800">
                 <h2 className="text-lg font-bold">Editar Herramienta o Material</h2>
             </div>
             <form onSubmit={handleUpdate} className="space-y-4">
-                <div>
+                <div className="w-full">
                     <label className="block text-sm font-medium text-gray-700">Nombre</label>
                     <input
                         type="text"
-                        id='nombre'
-                        name='nombre'
+                        id="nombre"
+                        name="nombre"
                         value={material.nombre}
-                        onChange={(e) => handleInputChange(e)}
+                        onChange={handleInputChange}
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
-                        autoComplete='off'
+                        autoComplete="off"
                     />
                 </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Descripcion</label>
+                <div className="w-full">
+                    <label className="block text-sm font-medium text-gray-700">Descripción</label>
                     <input
                         type="text"
-                        id='descripcion'
-                        name='descripcion'
+                        id="descripcion"
+                        name="descripcion"
                         value={material.descripcion}
-                        onChange={(e) => handleInputChange(e)}
+                        onChange={handleInputChange}
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
-                        autoComplete='off'
+                        autoComplete="off"
                     />
                 </div>
-                <div className='flex gap-4'>
-                    <div>
+                <div className="flex flex-col gap-4 md:flex-row">
+                    <div className="w-full">
                         <label className="block text-sm font-medium text-gray-700">Tipo</label>
                         <select
-                            type="text"
-                            id='tipo'
-                            name='tipo'
+                            id="tipo"
+                            name="tipo"
                             value={material.tipo}
-                            onChange={(e) => handleInputChange(e)}
+                            onChange={handleInputChange}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
                         >
                             <option value="">Seleccionar tipo de material</option>
@@ -117,13 +111,13 @@ const EditarMaterial = () => {
                             <option value="herramienta">Herramienta</option>
                         </select>
                     </div>
-                    <div>
+                    <div className="w-full">
                         <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
                         <select
-                            id='unidad'
-                            name='unidad'
+                            id="unidad"
+                            name="unidad"
                             value={material.unidad}
-                            onChange={(e) => handleInputChange(e)}
+                            onChange={handleInputChange}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
                         >
                             <option value="">Seleccionar unidad de medida</option>
@@ -141,29 +135,26 @@ const EditarMaterial = () => {
                             <option value="saco">Saco</option>
                             <option value="barril">Barril</option>
                             <option value="tonelada">Tonelada</option>
-                            <option value="Metro Cubico">Metro cubico</option>
+                            <option value="Metro Cubico">Metro cúbico</option>
                         </select>
                     </div>
                 </div>
-                
-                <div>
+                <div className="flex justify-start gap-2">
                     <button
                         type="submit"
-                        className="bg-gray-700 hover:bg-gray-500 text-white py-2 px-4 rounded-md mr-2"
+                        className="bg-gray-700 hover:bg-gray-500 text-white py-2 px-4 rounded-md"
                     >
                         Registrar
                     </button>
                     <button
+                        type="button"
                         onClick={() => navigate('/inventario/material')}
-                        className="bg-gray-700 hover:bg-gray-50 py-2 px-4 rounded-md"
+                        className="bg-gray-700 hover:bg-gray-500 text-white py-2 px-4 rounded-md"
                     >
                         Cancelar
                     </button>
                 </div>
-
-
-            </form>             
-            </div>
+            </form>
         </div>
     );
 };

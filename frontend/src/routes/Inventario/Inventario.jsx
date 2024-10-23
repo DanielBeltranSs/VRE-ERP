@@ -43,62 +43,63 @@ const Inventario = () => {
     const formatearFecha = (fecha) => {
         const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(fecha).toLocaleDateString('es-ES', opciones);
-    }
-
+    };
 
     return (
-        <div className='text-gray-700'>
+        <div className="text-gray-700">
             <div className="text-center mb-4 text-gray-800">
                 <h2 className="text-lg font-bold">Manejo de Inventario</h2>
             </div>
-            <div className='flex justify-between mb-3 text-xl'>
-                <div><button onClick={() => redireccionar("/inventario/almacen")}>Almacen</button></div>
-                <div><button onClick={() => redireccionar("/inventario/material")}>Materiales y Herramientas</button></div>
-                <div><button onClick={() => redireccionar("/inventario/registrar")}>Registrar Inventario</button></div>
+            <div className="flex flex-wrap justify-between mb-3 text-xl">
+                <div className="mb-2 md:mb-0"><button onClick={() => redireccionar("/inventario/almacen")}>Almacen</button></div>
+                <div className="mb-2 md:mb-0"><button onClick={() => redireccionar("/inventario/material")}>Materiales y Herramientas</button></div>
+                <div className="mb-2 md:mb-0"><button onClick={() => redireccionar("/inventario/registrar")}>Registrar Inventario</button></div>
             </div>
             <div>
-                <div class="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10">
-                    <table class="w-full table-fixed">
+                {/* Agregamos overflow-x-auto para pantallas pequeñas */}
+                <div className="shadow-lg rounded-lg overflow-x-auto mx-4 md:mx-10">
+                    <table className="w-full table-auto">
                         <thead>
-                            <tr class="bg-gray-200">
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Nombre</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Descripcion</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Cantidad</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Unidad de Medida</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Almacen</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Ingresado Por</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Fecha Ingreso</th>
-                                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Acciones</th>
+                            <tr className="bg-gray-200 text-xs md:text-sm">
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Nombre</th>
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Descripcion</th>
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Cantidad</th>
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Unidad de Medida</th>
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Almacen</th>
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Ingresado Por</th>
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Fecha Ingreso</th>
+                                <th className="w-1/4 py-2 md:py-4 px-2 md:px-6 text-left text-gray-600 font-bold uppercase">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white">
+                        <tbody className="bg-white text-xs md:text-sm">
                             {inventory && inventory.length > 0 ? (
                                 inventory.map((item) => (
-                                <tr key={item._id}>
-                                        <td class="py-4 px-6 border-b border-gray-200">{item.material.nombre}</td>
-                                        <td class="py-4 px-6 border-b border-gray-200">{item.material.descripcion}</td>
-                                        <td class="py-4 px-6 border-b border-gray-200 truncate">{item.cantidad}</td>
-                                        <td class="py-4 px-6 border-b border-gray-200">{item.material.unidad}</td>
-                                        <td class="py-4 px-6 border-b border-gray-200">{item.almacen.nombre}</td>
-                                        <td class="py-4 px-6 border-b border-gray-200">{item.usuarioIngreso}</td>
-                                        <td class="py-4 px-6 border-b border-gray-200">{formatearFecha(item.fechaIngreso)}</td>
-                                        
-                                    <td class="px-6 border-b border-gray-200">
-                                            <button onClick={() => navigate(`/inventario/editar/${item._id}`)} className="bg-gray-600 py-1 px-2 rounded-md">
-                                                <img className='w-5 h-5' src={`${import.meta.env.VITE_BASE_URL}/uploads/editar.png`} alt="" />
-                                            </button>
-                                            <button onClick={() => openModal(item._id)} className='bg-gray-600 py-1 px-2 rounded-md ml-2'>
-                                                <img className='w-5 h-5' src={`${import.meta.env.VITE_BASE_URL}/uploads/addrows2.png`} alt="" />
-                                            </button>
-                                    </td>
-                                </tr>
-                                ))
-                            ) : (
-                                    <tr>
-                                        <td>
-                                            No existe registro de inventarios asignado a proyectos.
+                                    <tr key={item._id} className="border-b border-gray-200">
+                                        <td className="py-2 md:py-4 px-2 md:px-6">{item.material.nombre}</td>
+                                        <td className="py-2 md:py-4 px-2 md:px-6 truncate">{item.material.descripcion}</td>
+                                        <td className="py-2 md:py-4 px-2 md:px-6">{item.cantidad}</td>
+                                        <td className="py-2 md:py-4 px-2 md:px-6">{item.material.unidad}</td>
+                                        <td className="py-2 md:py-4 px-2 md:px-6">{item.almacen.nombre}</td>
+                                        <td className="py-2 md:py-4 px-2 md:px-6">{item.usuarioIngreso}</td>
+                                        <td className="py-2 md:py-4 px-2 md:px-6">{formatearFecha(item.fechaIngreso)}</td>
+                                        <td className="py-2 md:py-4 px-2 md:px-6">
+                                            <div className="flex space-x-2">
+                                                <button onClick={() => navigate(`/inventario/editar/${item._id}`)} className="bg-gray-600 py-1 px-2 rounded-md">
+                                                    <img className="w-5 h-5" src={`${import.meta.env.VITE_BASE_URL}/uploads/editar.png`} alt="Editar" />
+                                                </button>
+                                                <button onClick={() => openModal(item._id)} className="bg-gray-600 py-1 px-2 rounded-md">
+                                                    <img className="w-5 h-5" src={`${import.meta.env.VITE_BASE_URL}/uploads/addrows2.png`} alt="Agregar" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="8" className="py-4 text-center">
+                                        No existe registro de inventarios asignado a proyectos.
+                                    </td>
+                                </tr>
                             )}
                         </tbody>
                     </table>

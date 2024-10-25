@@ -15,6 +15,7 @@ router.post("/", publicacionForoController.createPublicacionForo);
 // Rutas para crear, actualizar y eliminar publicaciones del foro
 router.put("/:id", publicacionForoController.updatePublicacionForo);
 router.delete("/:id", publicacionForoController.deletePublicacionForo);
+router.delete("/:idPublicacion/comentario/:idComentario", publicacionForoController.deleteComentario);
 router.put("/comentar/:id", publicacionForoController.comentar);
 router.get("/mispublicaciones/:author", publicacionForoController.getPublicacionesForoByAutor);
 

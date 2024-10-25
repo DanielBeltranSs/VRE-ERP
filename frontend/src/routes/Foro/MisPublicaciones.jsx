@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getMisPublicaciones } from './../../services/foro.service.js';
+import { getMisPublicaciones, deleteForo, deleteComentario } from './../../services/foro.service.js';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { toast } from 'react-toastify';
@@ -37,6 +37,35 @@ const MisPublicaciones = () => {
         e.target.src = `${import.meta.env.VITE_BASE_URL}/uploads/imagesNotFound.png`;
     };
 
+    // Función para eliminar publicaciones
+    const handleDeletePublicacion = async (postId) => {
+        try {
+            await deleteForo(postId);
+            toast.success('Publicación eliminada con éxito');
+            setpublicacion(publicacion.filter(post => post._id !== postId));  // Actualiza la lista de publicaciones
+        } catch (error) {
+            toast.error('Error al eliminar la publicación');
+        }
+    };
+
+    // Función para eliminar comentarios
+    const handleDeleteComentario = async (postId, comentarioId) => {
+        try {
+            await deleteComentario(postId, comentarioId);
+            toast.success('Comentario eliminado con éxito');
+            // Actualiza la lista de comentarios de la publicación
+            const updatedPublicaciones = publicacion.map(post => {
+                if (post._id === postId) {
+                    post.comentarios = post.comentarios.filter(com => com._id !== comentarioId);
+                }
+                return post;
+            });
+            setpublicacion(updatedPublicaciones);
+        } catch (error) {
+            toast.error('Error al eliminar el comentario');
+        }
+    };
+
     return (
         <div className="max-w-6xl mx-auto p-4">
             <div className="text-center mb-4 text-gray-800">
@@ -57,12 +86,20 @@ const MisPublicaciones = () => {
                     <div key={post._id} className="px-4 py-4 mb-4 ring-4 ring-gray-300 rounded-lg shadow-sm bg-gray-50">
                         <div className="flex justify-between items-start">
                             <h2 className="font-bold text-xl mb-2 text-gray-900 uppercase flex-1">{post.titulo}</h2>
-                            <button 
-                                onClick={() => navigate(`/foro/editar/${post._id}`)} 
-                                className="bg-gray-500 px-3 py-2 rounded-md"
-                            >
-                                <img className="w-5 h-5" src={`${import.meta.env.VITE_BASE_URL}/uploads/editar.png`} alt="Editar" />
-                            </button>
+                            <div className="flex space-x-2">
+                                <button 
+                                    onClick={() => navigate(`/foro/editar/${post._id}`)} 
+                                    className="bg-gray-500 px-3 py-2 rounded-md"
+                                >
+                                    <img className="w-5 h-5" src={`${import.meta.env.VITE_BASE_URL}/uploads/editar.png`} alt="Editar" />
+                                </button>
+                                <button 
+                                    onClick={() => handleDeletePublicacion(post._id)} 
+                                    className="bg-red-500 px-3 py-2 rounded-md"
+                                >
+                                    <img className="w-5 h-5" src={`${import.meta.env.VITE_BASE_URL}/uploads/eliminar.png`} alt="Eliminar" />
+                                </button>
+                            </div>
                         </div>
                         
                         {post.imagen && (
@@ -91,6 +128,15 @@ const MisPublicaciones = () => {
                                 <div className="flex justify-between mt-2">
                                     <p className="text-xs text-gray-600">{comentario.usuario}</p>
                                     <p className="text-xs text-gray-600">{formatearFecha(comentario.fecha)}</p>
+                                    {/* Botón para eliminar comentarios si es el autor */}
+                                    {comentario.usuario === user.email && (
+                                        <button 
+                                            onClick={() => handleDeleteComentario(post._id, comentario._id)} 
+                                            className="bg-red-500 px-3 py-2 rounded-md"
+                                        >
+                                            <img className="w-5 h-5" src={`${import.meta.env.VITE_BASE_URL}/uploads/eliminar.png`} alt="Eliminar comentario" />
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         ))}

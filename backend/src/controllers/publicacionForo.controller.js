@@ -77,11 +77,7 @@ async function updatePublicacionForo(req, res) {
 
 async function deletePublicacionForo(req, res) {
   try {
-    const { params } = req;
-    const { error: paramsError } = publicacionForoIdSchema.validate(params.id);
-    if (paramsError) return respondError(req, res, 400, paramsError.message);
-
-    const { id } = params;
+    const { id } = req.params;
     const [publicacion, errorPublicacion] = await PublicacionForoService.deletePublicacionForo(id);
     if (errorPublicacion) return respondError(req, res, 404, errorPublicacion);
 
@@ -92,10 +88,26 @@ async function deletePublicacionForo(req, res) {
   }
 }
 
+async function deleteComentario(req, res) {
+  try {
+    const { idPublicacion, idComentario } = req.params;
+
+    const [publicacion, errorPublicacion] = await PublicacionForoService.deleteComentario(idPublicacion, idComentario);
+    if (errorPublicacion) return respondError(req, res, 404, errorPublicacion);
+
+    respondSuccess(req, res, 200, publicacion);
+  } catch (error) {
+    handleError(error, "publicacionForo.controller -> deleteComentario");
+    respondInternalError(req, res);
+  }
+}
+
+
+
+
 async function comentar(req, res) {
   try {
     const { params, body } = req;
-    console.log(body);
     const { id } = params;
 
     const [publicacion, errorPublicacion] = await PublicacionForoService.comentar(id, body);
@@ -128,6 +140,7 @@ module.exports = {
   createPublicacionForo,
   updatePublicacionForo,
   deletePublicacionForo,
+  deleteComentario,
   comentar,
   getPublicacionesForoByAutor,
 };

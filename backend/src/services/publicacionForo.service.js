@@ -118,13 +118,16 @@ async function updatePublicacionForo(id, publicacion) {
 async function deletePublicacionForo(id) {
     try {
         const publicacionFound = await PublicacionForo.findById(id);
-        if (!publicacionFound) return [null, "La publicacion no existe"];
+        if (!publicacionFound) return [null, "La publicación no existe"]; // Asegura un arreglo aquí
 
-        return await PublicacionForo.findByIdAndDelete(id);
+        await PublicacionForo.findByIdAndDelete(id);
+        return ["Publicación eliminada exitosamente", null]; // Retorna un arreglo
     } catch (error) {
         handleError(error, "publicacionForo.service -> deletePublicacionForo");
+        return [null, "Error al eliminar la publicación"]; // Asegura un arreglo aquí también
     }
 }
+
 
 async function comentar(id, comentario) {
     try {
@@ -152,6 +155,24 @@ async function getPublicacionesForoByAutor(autor) {
     }
 }
 
+async function deleteComentario(idPublicacion, idComentario) {
+    try {
+        const publicacion = await PublicacionForo.findById(idPublicacion);
+        if (!publicacion) return [null, "La publicación no existe"];
+
+        // Filtra los comentarios para eliminar el especificado
+        publicacion.comentarios = publicacion.comentarios.filter(
+            (comentario) => comentario._id.toString() !== idComentario
+        );
+
+        await publicacion.save();
+        return [publicacion, null];
+    } catch (error) {
+        handleError(error, "publicacionForo.service -> deleteComentario");
+    }
+}
+
+
 
 module.exports = {
     getPublicacionesForo,
@@ -159,6 +180,7 @@ module.exports = {
     getPublicacionForoById,
     updatePublicacionForo,
     deletePublicacionForo,
+    deleteComentario,
     comentar,
     getPublicacionesForoByAutor,
 };

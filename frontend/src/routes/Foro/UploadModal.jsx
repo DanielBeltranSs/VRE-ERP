@@ -9,8 +9,8 @@ const customStyles = {
         right: 'auto',
         bottom: 'auto',
         transform: 'translate(-50%, -50%)',
-        maxWidth: '90%', // Ancho máximo del modal
-        width: '400px', // Ancho específico del modal
+        maxWidth: '90%', 
+        width: '400px', 
         padding: '20px',
         borderRadius: '8px',
         boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
@@ -30,10 +30,12 @@ const UploadModal = ({ isOpen, onClose, onFileUpload }) => {
         let formData = new FormData();
         formData.append('files', selectedFile);
         const responce = await createImgForo(formData);
-        console.log(responce.data._id);
         onFileUpload(responce.data._id);
-        // Cerrar el modal después de la carga
         onClose();
+    };
+
+    const handleButtonClick = () => {
+        document.getElementById('fileInput').click();
     };
 
     return (
@@ -65,22 +67,35 @@ const UploadModal = ({ isOpen, onClose, onFileUpload }) => {
                     </svg>
                 </button>
             </div>
+            
             <input
                 type="file"
+                id="fileInput"
                 onChange={handleFileChange}
-                className="border border-gray-300 rounded-md py-2 px-4 mb-4 block w-full"
+                className="hidden" 
             />
-            {selectedFile && (
-                <div className="mt-4 text-gray-700">
-                    <p>Archivo seleccionado: {selectedFile.name}</p>
-                    <p>Tamaño: {selectedFile.size} bytes</p>
-                    <p>Tipo: {selectedFile.type}</p>
-                </div>
-            )}
-            <div className="flex justify-end">
+            
+            <div className="mt-4 text-center">
+                <button
+                    onClick={handleButtonClick}
+                    className="bg-gray-700 hover:bg-gray-500 text-white py-2 px-4 rounded-md"
+                >
+                    Seleccionar archivo
+                </button>
+                {selectedFile && (
+                    <div className="mt-4 text-gray-700">
+                        <p>Archivo seleccionado: {selectedFile.name}</p>
+                        <p>Tamaño: {selectedFile.size} bytes</p>
+                        <p>Tipo: {selectedFile.type}</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Contenedor para centrar los botones */}
+            <div className="flex justify-center mt-4 space-x-4">
                 <button
                     onClick={handleSubmit}
-                    className="bg-gray-700 hover:bg-gray-500 text-white py-2 px-4 rounded-md mr-2"
+                    className="bg-gray-700 hover:bg-gray-500 text-white py-2 px-4 rounded-md"
                 >
                     Subir
                 </button>
@@ -91,7 +106,6 @@ const UploadModal = ({ isOpen, onClose, onFileUpload }) => {
                     Cancelar
                 </button>
             </div>
-            
         </Modal>
     );
 };

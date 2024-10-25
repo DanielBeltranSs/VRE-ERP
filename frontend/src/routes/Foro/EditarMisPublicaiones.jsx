@@ -27,34 +27,29 @@ const EditarMisPublicaciones = () => {
         try {
             const response = await getForoById(id);
             if (response.data.imagen === null) {
-                setPublicacion(
-                    {
-                        titulo: response.data.titulo,
-                        contenido: response.data.contenido,
-                        imagen: '',
-                        comentarios: response.data.comentarios,
-                        autor: response.data.autor,
-                        fechaCreacion: response.data.fechaCreacion,
-                    }
-                );
+                setPublicacion({
+                    titulo: response.data.titulo,
+                    contenido: response.data.contenido,
+                    imagen: '',
+                    comentarios: response.data.comentarios,
+                    autor: response.data.autor,
+                    fechaCreacion: response.data.fechaCreacion,
+                });
             } else {
-            setPublicacion(
-                {
+                setPublicacion({
                     titulo: response.data.titulo,
                     contenido: response.data.contenido,
                     imagen: response.data.imagen._id,
                     comentarios: response.data.comentarios,
                     autor: response.data.autor,
                     fechaCreacion: response.data.fechaCreacion,
-                }
-                );
+                });
             }
         } catch (error) {
             console.error('Error al obtener la publicación:', error);
             alert('Hubo un error al obtener la publicación');
         }
     };
-
 
     const openModal = () => {
         setModalIsOpen(true);
@@ -66,19 +61,14 @@ const EditarMisPublicaciones = () => {
 
     const handleFileUpload = (fileId) => {
         setPublicacion({ 
-            titulo: publicacion.titulo,
-            contenido: publicacion.contenido,
+            ...publicacion,
             imagen: fileId,
-            comentarios: publicacion.comentarios,
-            autor: publicacion.autor,
-            fechaCreacion: publicacion.fechaCreacion,
         });
     };
 
-
     const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setPublicacion({ ...publicacion, [name]: value });
+        const { name, value } = e.target;
+        setPublicacion({ ...publicacion, [name]: value });
     };
 
     const handleSubmit = async (e) => {
@@ -103,63 +93,60 @@ const EditarMisPublicaciones = () => {
                 imagen: '',
                 comentarios: [],
                 autor: '',
+                fechaCreacion: '',
             });
-            setImageFile(null);
         } catch (error) {
-            console.error('Error al crear la publicación:', error);
+            console.error('Error al modificar la publicación:', error);
             toast.error(error);
         }
     };
 
     return (
-        <div>
-            <div className="">
-                
-                <div className='flex justify-between'>
-                    <h1 className="text-2xl font-bold text-blue-900 ">Nueva Publicacion</h1>
-                    <button onClick={openModal} className=' py-2 px-3 border border-transparent shadow-sm rounded-md 
-                    bg-violet-500'
-                    >
-                        <img className='w-5 h-5' src={`${import.meta.env.VITE_BASE_URL}/uploads/addphoto.png`} alt="" />
-                    </button>
-                        <UploadModal isOpen={modalIsOpen} onClose={closeModal} onFileUpload={handleFileUpload} />   
-                </div>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Titulo</label>
-                    <input
-                    type="text"
-                    id='titulo'
-                    name='titulo'
-                    value={publicacion.titulo}
-                    onChange={(e) => handleInputChange(e)}
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700"
-                    autoComplete='off'
-                    />
-                    </div>
-                    
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Contenido</label>
-                        <textarea
-                            type="text"
-                            id='contenido'
-                            name='contenido'
-                            value={publicacion.contenido}
-                            onChange={(e) => handleInputChange(e)}
-                            className="mt-1 w-full h-80 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none  bg-gray-300 text-gray-700"
-                            autoComplete='off'
-                    />
-                </div>
-                <button
-                    type="submit"
-                    className="flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                    Modificar
+        <div className="max-w-4xl mx-auto p-4">
+            <div className="flex justify-between mb-4">
+                <h1 className="text-2xl font-bold text-gray-900">Editar Publicación</h1>
+                <button 
+                    onClick={openModal} 
+                    className="py-2 px-3 border border-transparent shadow-sm rounded-md bg-gray-500 hover:bg-gray-600 transition-colors"
+                >
+                    <img className="w-5 h-5" src={`${import.meta.env.VITE_BASE_URL}/uploads/addphoto.png`} alt="Subir imagen" />
                 </button>
-                </form>
-                
+                <UploadModal isOpen={modalIsOpen} onClose={closeModal} onFileUpload={handleFileUpload} />
             </div>
             
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Título</label>
+                    <input
+                        type="text"
+                        id="titulo"
+                        name="titulo"
+                        value={publicacion.titulo}
+                        onChange={handleInputChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500"
+                        autoComplete="off"
+                    />
+                </div>
+                
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Contenido</label>
+                    <textarea
+                        id="contenido"
+                        name="contenido"
+                        value={publicacion.contenido}
+                        onChange={handleInputChange}
+                        className="mt-1 block w-full h-80 px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700 focus:ring-gray-500 focus:border-gray-500"
+                        autoComplete="off"
+                    />
+                </div>
+                
+                <button
+                    type="submit"
+                    className="w-full py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all"
+                >
+                    Modificar
+                </button>
+            </form>
         </div>
     );
 };

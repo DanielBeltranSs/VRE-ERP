@@ -1,11 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
-import { getProyectos, addActividadToProyecto } from '../services/ProyectoService';
+import { createProyecto } from '../services/ProyectoService';
 import { toast } from 'react-toastify';
 
-function AgregarActividad({ onActividadAdded }) {
+function AgregarProyecto({ onProyectoAdded }) {
+  const [proyectoData, setProyectoData] = useState({
+    titulo: '',
+    descripcion: '',
+    empresa_licitante: '',
+    fecha_inicio: null,
+    fecha_termino: null,
+    presupuesto: '',
+    actividades: []
+  });
+
   const [actividadData, setActividadData] = useState({
     nombre: '',
     descripcion: '',
@@ -15,149 +25,188 @@ function AgregarActividad({ onActividadAdded }) {
     estado: false,
   });
 
-  const [proyectos, setProyectos] = useState([]);
-  const [selectedProyectoId, setSelectedProyectoId] = useState('');
-
-  useEffect(() => {
-    const fetchProyectos = async () => {
-      try {
-        const proyectos = await getProyectos();
-        setProyectos(proyectos);
-      } catch (error) {
-        console.error('Error al obtener los proyectos', error);
-        toast.error('Error al cargar los proyectos.');
-      }
-    };
-
-    fetchProyectos();
-  }, []);
+  const handleProyectoInputChange = (e) => {
+    const { name, value } = e.target;
+    setProyectoData({ ...proyectoData, [name]: value });
+  };
 
   const handleActividadInputChange = (e) => {
     const { name, value } = e.target;
     setActividadData({ ...actividadData, [name]: value });
   };
 
+  const handleProyectoDateChange = (date, field) => {
+    setProyectoData({ ...proyectoData, [field]: date });
+  };
+
   const handleActividadDateChange = (date, field) => {
     setActividadData({ ...actividadData, [field]: date });
   };
 
-  const handleProyectoChange = (e) => {
-    setSelectedProyectoId(e.target.value);
+  const agregarActividad = () => {
+    setProyectoData({
+      ...proyectoData,
+      actividades: [...proyectoData.actividades, actividadData]
+    });
+    setActividadData({
+      nombre: '',
+      descripcion: '',
+      fecha_inicio: null,
+      fecha_termino: null,
+      responsable: '',
+      estado: false,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formattedActividad = {
-      ...actividadData,
-      fecha_inicio: format(actividadData.fecha_inicio, 'dd/MM/yyyy'),
-      fecha_termino: format(actividadData.fecha_termino, 'dd/MM/yyyy'),
+    const formattedProyecto = {
+      ...proyectoData,
+      fecha_inicio: proyectoData.fecha_inicio ? format(proyectoData.fecha_inicio, 'dd/MM/yy') : null,
+      fecha_termino: proyectoData.fecha_termino ? format(proyectoData.fecha_termino, 'dd/MM/yy') : null,
+      actividades: proyectoData.actividades.map((actividad) => ({
+        ...actividad,
+        fecha_inicio: actividad.fecha_inicio ? format(actividad.fecha_inicio, 'dd/MM/yy') : null,
+        fecha_termino: actividad.fecha_termino ? format(actividad.fecha_termino, 'dd/MM/yy') : null,
+      }))
     };
 
     try {
-      await addActividadToProyecto(selectedProyectoId, formattedActividad);
-      toast.success('Actividad agregada con éxito');
-      onActividadAdded(formattedActividad);
+      await createProyecto(formattedProyecto);
+      toast.success('Proyecto agregado con éxito');
+      onProyectoAdded(formattedProyecto);
     } catch (error) {
-      console.error('Error al agregar la actividad', error.response ? error.response.data : error.message);
-      toast.error('Hubo un error al agregar la actividad. Por favor, inténtelo de nuevo.');
+      console.error('Error al agregar el proyecto', error.response ? error.response.data : error.message);
+      toast.error('Hubo un error al agregar el proyecto. Por favor, inténtelo de nuevo.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="container mx-auto p-4 bg-white border border-gray-200 rounded-lg shadow-md">
-      <h3 className="text-2xl font-bold text-blue-900 mb-6">Agregar Actividad</h3>
-      <div className="mb-4">
-        <label htmlFor="proyecto" className="block text-gray-700 font-medium mb-2">Seleccionar Proyecto:</label>
-        <select
-          id="proyecto"
-          name="proyecto"
-          value={selectedProyectoId}
-          onChange={handleProyectoChange}
-          className="p-2 border border-gray-300 rounded-md shadow-sm w-full"
-        >
-          <option value="">Seleccione un proyecto</option>
-          {proyectos.map((proyecto) => (
-            <option key={proyecto._id} value={proyecto._id}>
-              {proyecto.titulo}
-            </option>
-          ))}
-        </select>
-      </div>
+    <form onSubmit={handleSubmit} className="container mx-auto p-4 bg-gray-100 border border-gray-300 rounded-lg shadow-md max-w-3xl flex flex-col space-y-4">
+      <h3 className="text-2xl font-bold text-gray-900 mb-6">Agregar Proyecto</h3>
 
-      <div className="mb-4">
-        <label htmlFor="nombre" className="block text-gray-700 font-medium mb-2">Nombre de la Actividad:</label>
+      <div className="flex flex-col mb-4">
+        <label htmlFor="titulo" className="block text-gray-700 font-medium mb-2">Título:</label>
         <input
           type="text"
-          id="nombre"
-          name="nombre"
-          value={actividadData.nombre}
-          onChange={handleActividadInputChange}
+          id="titulo"
+          name="titulo"
+          value={proyectoData.titulo}
+          onChange={handleProyectoInputChange}
           className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+          required
         />
       </div>
 
-      <div className="mb-4">
-        <label htmlFor="descripcion" className="block text-gray-700 font-medium mb-2">Descripción de la Actividad:</label>
-        <input
-          type="text"
+      <div className="flex flex-col mb-4">
+        <label htmlFor="descripcion" className="block text-gray-700 font-medium mb-2">Descripción:</label>
+        <textarea
           id="descripcion"
           name="descripcion"
-          value={actividadData.descripcion}
-          onChange={handleActividadInputChange}
+          value={proyectoData.descripcion}
+          onChange={handleProyectoInputChange}
           className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+          required
         />
       </div>
 
-      <div className="mb-4">
-        <label htmlFor="fecha_inicio_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Inicio de la Actividad:</label>
-        <DatePicker
-          selected={actividadData.fecha_inicio}
-          onChange={(date) => handleActividadDateChange(date, 'fecha_inicio')}
-          dateFormat="dd/MM/yyyy"
-          className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="fecha_termino_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Término de la Actividad:</label>
-        <DatePicker
-          selected={actividadData.fecha_termino}
-          onChange={(date) => handleActividadDateChange(date, 'fecha_termino')}
-          dateFormat="dd/MM/yyyy"
-          className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="responsable" className="block text-gray-700 font-medium mb-2">Responsable:</label>
+      <div className="flex flex-col mb-4">
+        <label htmlFor="empresa_licitante" className="block text-gray-700 font-medium mb-2">Empresa Licitante:</label>
         <input
           type="text"
-          id="responsable"
-          name="responsable"
-          value={actividadData.responsable}
-          onChange={handleActividadInputChange}
+          id="empresa_licitante"
+          name="empresa_licitante"
+          value={proyectoData.empresa_licitante}
+          onChange={handleProyectoInputChange}
           className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="flex flex-col">
+          <label htmlFor="fecha_inicio" className="block text-gray-700 font-medium mb-2">Fecha de Inicio:</label>
+          <DatePicker
+            selected={proyectoData.fecha_inicio}
+            onChange={(date) => handleProyectoDateChange(date, 'fecha_inicio')}
+            dateFormat="dd/MM/yy"
+            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+            required
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="fecha_termino" className="block text-gray-700 font-medium mb-2">Fecha de Término:</label>
+          <DatePicker
+            selected={proyectoData.fecha_termino}
+            onChange={(date) => handleProyectoDateChange(date, 'fecha_termino')}
+            dateFormat="dd/MM/yy"
+            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+            required
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col mb-4">
+        <label htmlFor="presupuesto" className="block text-gray-700 font-medium mb-2">Presupuesto:</label>
+        <input
+          type="number"
+          id="presupuesto"
+          name="presupuesto"
+          value={proyectoData.presupuesto}
+          onChange={handleProyectoInputChange}
+          className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+          required
         />
       </div>
 
       <div className="mb-4">
-        <label htmlFor="estado" className="block text-gray-700 font-medium mb-2">Estado:</label>
-        <select
-          id="estado"
-          name="estado"
-          value={actividadData.estado}
-          onChange={handleActividadInputChange}
-          className="p-2 border border-gray-300 rounded-md shadow-sm w-full text-black"
+        <h4 className="text-xl font-semibold text-gray-900 mb-4">Agregar Actividad</h4>
+        <div className="flex flex-col mb-4">
+          <label htmlFor="nombre" className="block text-gray-700 font-medium mb-2">Nombre de la Actividad:</label>
+          <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            value={actividadData.nombre}
+            onChange={handleActividadInputChange}
+            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="flex flex-col">
+            <label htmlFor="fecha_inicio_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Inicio de la Actividad:</label>
+            <DatePicker
+              selected={actividadData.fecha_inicio}
+              onChange={(date) => handleActividadDateChange(date, 'fecha_inicio')}
+              dateFormat="yyyy-MM-dd"
+              className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="fecha_termino_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Término de la Actividad:</label>
+            <DatePicker
+              selected={actividadData.fecha_termino}
+              onChange={(date) => handleActividadDateChange(date, 'fecha_termino')}
+              dateFormat="yyyy-MM-dd"
+              className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+            />
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={agregarActividad}
+          className="p-2 bg-gray-600 text-white rounded-md shadow-sm w-full mt-4 hover:bg-gray-700"
         >
-          <option value={false}>Incompleto</option>
-          <option value={true}>Completo</option>
-        </select>
+          Agregar Actividad
+        </button>
       </div>
 
-      <button type="submit" className="p-2 border border-gray-300 rounded-md shadow-sm bg-blue-600 text-white w-full">Agregar Actividad</button>
+      <button type="submit" className="p-2 bg-gray-600 text-white rounded-md shadow-sm w-full mt-4 hover:bg-gray-700">Agregar Proyecto</button>
     </form>
   );
 }
 
-export default AgregarActividad;
+export default AgregarProyecto;

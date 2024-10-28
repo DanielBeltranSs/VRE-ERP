@@ -114,19 +114,19 @@ const ProyectoList = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold text-blue-900 mb-6">Lista de Proyectos</h2>
-      <div className="mb-6 flex items-center space-x-4">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Lista de Proyectos</h2>
+      <div className="mb-6 flex flex-wrap items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
         <input
           type="text"
           placeholder="Buscar por título..."
           value={searchTerm}
           onChange={handleSearch}
-          className="p-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
+          className="p-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700 w-full sm:w-auto"
         />
         <select
           value={sortOrder}
           onChange={handleSortOrderChange}
-          className="p-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
+          className="p-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700 w-full sm:w-auto"
         >
           <option value="fechaAsc">Fecha de inicio ascendente</option>
           <option value="fechaDesc">Fecha de inicio descendente</option>
@@ -138,15 +138,15 @@ const ProyectoList = () => {
       </div>
       <ul className="space-y-6">
         {filteredProyectos.map((proyecto) => (
-          <li key={proyecto._id} className="p-6 border border-gray-200 rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out">
-            <h3 className="text-xl font-semibold text-blue-900 mb-2">{proyecto.titulo}</h3>
+          <li key={proyecto._id} className="p-4 sm:p-6 border border-gray-200 rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center sm:text-left">{proyecto.titulo}</h3>
             <p className="text-gray-700 mb-2"><strong>Descripción:</strong> {proyecto.descripcion}</p>
             <p className="text-gray-700 mb-2"><strong>Empresa Licitante:</strong> {proyecto.empresa_licitante}</p>
             <p className="text-gray-700 mb-2"><strong>Fecha de Inicio:</strong> {proyecto.fecha_inicio}</p>
             <p className="text-gray-700 mb-2"><strong>Fecha de Término:</strong> {proyecto.fecha_termino}</p>
             <p className="text-gray-700 mb-4"><strong>Presupuesto:</strong> ${proyecto.presupuesto}</p>
             <div>
-              <h4 className="text-lg font-medium text-blue-900 mb-2">Actividades:</h4>
+              <h4 className="text-lg font-medium text-gray-900 mb-2">Actividades:</h4>
               <ul className="list-disc pl-5 space-y-2">
                 {proyecto.actividades.map((actividad, index) => (
                   <li key={index} className="bg-gray-50 p-3 rounded-md shadow-sm">
@@ -160,7 +160,7 @@ const ProyectoList = () => {
                       <select
                         value={actividad.estado ? 'completado' : 'no completado'}
                         onChange={(e) => handleEstadoChange(proyecto._id, index, e.target.value === 'completado')}
-                        className="p-1 border border-gray-300 rounded-md bg-gray-200 text-gray-700"
+                        className="p-1 border border-gray-300 rounded-md bg-gray-200 text-gray-700 w-full sm:w-auto"
                       >
                         <option value="no completado">No completado</option>
                         <option value="completado">Completado</option>
@@ -173,31 +173,30 @@ const ProyectoList = () => {
                 <div className="relative pt-1">
                   <div className="flex mb-2 items-center justify-between">
                     <div>
-                      <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">
+                      <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-gray-600 bg-gray-200">
                         Progreso
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs font-semibold inline-block text-blue-600">
+                      <span className="text-xs font-semibold inline-block text-gray-600">
                         {calculateProgress(proyecto.actividades).toFixed(2)}%
                       </span>
                     </div>
                   </div>
-                  <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200">
+                  <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
                     <div
                       style={{ width: `${calculateProgress(proyecto.actividades)}%` }}
-                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-600"
-                      ></div>
-                    </div>
+                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gray-600"
+                    ></div>
                   </div>
                 </div>
               </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  };
-  
-  export default ProyectoList;
-  
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default ProyectoList;

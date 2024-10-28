@@ -3,6 +3,7 @@ import { createInventarioProyecto } from './../../services/inventarioProyecto.se
 import { getProyectos } from '../../services/ProyectoService.js';
 import { getInventario } from '../../services/inventario.service.js';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const AddProyectoInventario = () => {
     const navigate = useNavigate();
@@ -24,6 +25,7 @@ const AddProyectoInventario = () => {
             setProyecto(response);
         } catch (error) {
             console.error('Error fetching proyecto data:', error);
+            toast.error('Error al cargar los proyectos.');
         }
     };
 
@@ -33,6 +35,7 @@ const AddProyectoInventario = () => {
             setInventarioMH(response.data);
         } catch (error) {
             console.error('Error fetching inventario data:', error);
+            toast.error('Error al cargar el inventario.');
         }
     };
 
@@ -69,7 +72,7 @@ const AddProyectoInventario = () => {
         e.preventDefault();
         try {
             await createInventarioProyecto(inventarioProyecto);
-            alert('Inventario asignado con éxito');
+            toast.success('Inventario asignado con éxito');
             navigate('/proyectos/inventario');
             setInventarioProyecto({
                 proyecto: '',
@@ -77,7 +80,7 @@ const AddProyectoInventario = () => {
             });
         } catch (error) {
             console.error('Error al asignar el inventario:', error);
-            alert('Hubo un error al asignar el inventario');
+            toast.error('Hubo un error al asignar el inventario');
         }
     };
 

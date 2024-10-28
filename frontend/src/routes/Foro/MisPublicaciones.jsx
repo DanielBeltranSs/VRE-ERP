@@ -95,7 +95,7 @@ const MisPublicaciones = () => {
                                 </button>
                                 <button 
                                     onClick={() => handleDeletePublicacion(post._id)} 
-                                    className="bg-red-500 px-3 py-2 rounded-md"
+                                    className="bg-gray-500 px-3 py-2 rounded-md"
                                 >
                                     <img className="w-5 h-5" src={`${import.meta.env.VITE_BASE_URL}/uploads/eliminar.png`} alt="Eliminar" />
                                 </button>
@@ -132,7 +132,7 @@ const MisPublicaciones = () => {
                                     {comentario.usuario === user.email && (
                                         <button 
                                             onClick={() => handleDeleteComentario(post._id, comentario._id)} 
-                                            className="bg-red-500 px-3 py-2 rounded-md"
+                                            className="bg-gray-500 px-3 py-2 rounded-md"
                                         >
                                             <img className="w-5 h-5" src={`${import.meta.env.VITE_BASE_URL}/uploads/eliminar.png`} alt="Eliminar comentario" />
                                         </button>

@@ -23,7 +23,7 @@ const Proyectos = () => {
     }
   };
 
-  const buttonStyle = "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer custom-button";
+  const buttonStyle = "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded cursor-pointer custom-button";
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">

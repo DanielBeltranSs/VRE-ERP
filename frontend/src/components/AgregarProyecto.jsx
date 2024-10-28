@@ -83,7 +83,7 @@ function AgregarProyecto({ onProyectoAdded }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="container mx-auto p-4 bg-gray-100 border border-gray-300 rounded-lg shadow-md">
+    <form onSubmit={handleSubmit} className="container mx-auto p-4 bg-gray-100 border border-gray-300 rounded-lg shadow-md max-w-3xl">
       <h3 className="text-2xl font-bold text-gray-900 mb-6">Agregar Proyecto</h3>
 
       <div className="mb-4">
@@ -124,26 +124,27 @@ function AgregarProyecto({ onProyectoAdded }) {
         />
       </div>
 
-      <div className="mb-4">
-        <label htmlFor="fecha_inicio" className="block text-gray-700 font-medium mb-2">Fecha de Inicio:</label>
-        <DatePicker
-          selected={proyectoData.fecha_inicio}
-          onChange={(date) => handleProyectoDateChange(date, 'fecha_inicio')}
-          dateFormat="dd/MM/yy"
-          className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
-          required
-        />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="fecha_termino" className="block text-gray-700 font-medium mb-2">Fecha de Término:</label>
-        <DatePicker
-          selected={proyectoData.fecha_termino}
-          onChange={(date) => handleProyectoDateChange(date, 'fecha_termino')}
-          dateFormat="dd/MM/yy"
-          className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
-          required
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label htmlFor="fecha_inicio" className="block text-gray-700 font-medium mb-2">Fecha de Inicio:</label>
+          <DatePicker
+            selected={proyectoData.fecha_inicio}
+            onChange={(date) => handleProyectoDateChange(date, 'fecha_inicio')}
+            dateFormat="dd/MM/yy"
+            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="fecha_termino" className="block text-gray-700 font-medium mb-2">Fecha de Término:</label>
+          <DatePicker
+            selected={proyectoData.fecha_termino}
+            onChange={(date) => handleProyectoDateChange(date, 'fecha_termino')}
+            dateFormat="dd/MM/yy"
+            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+            required
+          />
+        </div>
       </div>
 
       <div className="mb-4">
@@ -185,24 +186,25 @@ function AgregarProyecto({ onProyectoAdded }) {
           />
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="fecha_inicio_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Inicio de la Actividad:</label>
-          <DatePicker
-            selected={actividadData.fecha_inicio}
-            onChange={(date) => handleActividadDateChange(date, 'fecha_inicio')}
-            dateFormat="yyyy-MM-dd"
-            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="fecha_termino_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Término de la Actividad:</label>
-          <DatePicker
-            selected={actividadData.fecha_termino}
-            onChange={(date) => handleActividadDateChange(date, 'fecha_termino')}
-            dateFormat="yyyy-MM-dd"
-            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label htmlFor="fecha_inicio_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Inicio de la Actividad:</label>
+            <DatePicker
+              selected={actividadData.fecha_inicio}
+              onChange={(date) => handleActividadDateChange(date, 'fecha_inicio')}
+              dateFormat="yyyy-MM-dd"
+              className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+            />
+          </div>
+          <div>
+            <label htmlFor="fecha_termino_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Término de la Actividad:</label>
+            <DatePicker
+              selected={actividadData.fecha_termino}
+              onChange={(date) => handleActividadDateChange(date, 'fecha_termino')}
+              dateFormat="yyyy-MM-dd"
+              className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+            />
+          </div>
         </div>
 
         <div className="mb-4">

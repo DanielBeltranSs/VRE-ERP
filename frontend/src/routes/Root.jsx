@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import RootUsuario from '../components/RootUsuario.jsx';
@@ -25,7 +25,9 @@ function PageRoot() {
       {/* Barra superior */}
       <div className="bg-gray-200 rounded shadow-md text-gray-700 flex justify-between items-center p-4 relative z-50 w-full">
         <div className="w-3/4">
-          <h1 className="text-xl md:text-3xl mb-2">ERP Constructora Vladimir Robinson Endia E.I.R.L</h1>
+          <Link to="/" className="text-xl md:text-3xl mb-2">
+            ERP Constructora Vladimir Robinson Endia E.I.R.L
+          </Link>
         </div>
         <div className="flex justify-end w-1/4 items-center">
           <RootUsuario />
@@ -35,17 +37,16 @@ function PageRoot() {
       {/* Contenido de la página */}
       <div className="flex-grow flex relative">
         {/* Botón Abrir/Cerrar Menú para pantallas pequeñas */}
-        <div className="fixed bottom-6 right-6 z-50 md:hidden">  {/* Añadimos md:hidden */}
-  <button 
-    onClick={handleMenuToggle}
-    className="bg-gray-800 text-white p-4 rounded-full focus:outline-none shadow-lg"
-  >
-    {/* Icono típico de "hamburguesa" */}
-    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-    </svg>
-  </button>
-</div>
+        <div className="fixed bottom-6 right-6 z-50 md:hidden">  
+          <button 
+            onClick={handleMenuToggle}
+            className="bg-gray-800 text-white p-4 rounded-full focus:outline-none shadow-lg"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+          </button>
+        </div>
 
         {/* Menú lateral */}
         <div 
@@ -58,26 +59,26 @@ function PageRoot() {
           <nav className="flex-grow mt-40">
             <ul>
               <li>
-                <a href="/" className="block py-2.5 px-4 rounded hover:bg-gray-700">Inicio</a>
+                <Link to="/" className="block py-2.5 px-4 rounded hover:bg-gray-700">Inicio</Link>
               </li>
               <li>
-                <a href="/foro" className="block py-2.5 px-4 rounded hover:bg-gray-700">Foro</a>
+                <Link to="/foro" className="block py-2.5 px-4 rounded hover:bg-gray-700">Foro</Link>
               </li>
               {isAdmin && (
                 <li>
-                  <a href="/proyectos" className="block py-2.5 px-4 rounded hover:bg-gray-700">Proyectos</a>
+                  <Link to="/proyectos" className="block py-2.5 px-4 rounded hover:bg-gray-700">Proyectos</Link>
                 </li>
               )}
               <li>
-                <a href="/asistencia" className="block py-2.5 px-4 rounded hover:bg-gray-700">Asistencia</a>
+                <Link to="/asistencia" className="block py-2.5 px-4 rounded hover:bg-gray-700">Asistencia</Link>
               </li>
               {isAdmin && (
                 <>
                   <li>
-                    <a href="/inventario" className="block py-2.5 px-4 rounded hover:bg-gray-700">Inventario</a>
+                    <Link to="/inventario" className="block py-2.5 px-4 rounded hover:bg-gray-700">Inventario</Link>
                   </li>
                   <li>
-                    <a href="/usuarios" className="block py-2.5 px-4 rounded hover:bg-gray-700">Usuarios</a>
+                    <Link to="/usuarios" className="block py-2.5 px-4 rounded hover:bg-gray-700">Usuarios</Link>
                   </li>
                 </>
               )}

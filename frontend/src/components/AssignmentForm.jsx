@@ -76,14 +76,20 @@ const AssignmentForm = () => {
   };
 
   return (
-    <div className="text-gray-700 bg-gray-200 p-4 mt-4 rounded-lg shadow-md">
+    <div className="text-gray-700 bg-gray-200 p-4 mt-4 rounded-lg shadow-md max-w-3xl mx-auto">
       <ToastContainer />
       {error && <div className="bg-red-500 text-white p-2 rounded mb-4">{error}</div>}
-      <div className="flex justify-between mb-4">
+      <div className="flex flex-col md:flex-row md:justify-between mb-4">
         <h2 className="text-lg font-bold text-black">Crear Asignación</h2>
-        <button onClick={handleViewAssignments} className="bg-gray-500 text-white p-2 rounded">Ver Asignaciones</button>
+        <button 
+          onClick={handleViewAssignments} 
+          className="bg-gray-500 text-white p-2 rounded mt-2 md:mt-0 md:ml-4 text-sm"
+        >
+          Ver Asignaciones
+        </button>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label htmlFor="projects" className="block text-gray-700">Proyectos:</label>
           <select
@@ -108,8 +114,9 @@ const AssignmentForm = () => {
               <option value="" disabled className="text-black">Cargando proyectos...</option>
             )}
           </select>
+          
           <label htmlFor="participants" className="block text-gray-700">Participantes:</label>
-          <div className="flex mb-2">
+          <div className="flex flex-col md:flex-row mb-2">
             <select
               id="participants"
               className="border rounded p-2 w-full text-black bg-white"
@@ -125,14 +132,24 @@ const AssignmentForm = () => {
                 <option value="" disabled className="text-black">Cargando participantes...</option>
               )}
             </select>
-            <button onClick={handleAddParticipant} className="bg-gray-500 text-white p-2 ml-2 rounded">
+            <button 
+              onClick={handleAddParticipant} 
+              className="bg-gray-500 text-white p-2 rounded mt-2 md:mt-0 md:ml-2 flex justify-center items-center"
+            >
               <img className="w-5 h-5" src={`${import.meta.env.VITE_BASE_URL}/uploads/add.png`} alt="Añadir" />
             </button>
           </div>
-          <button onClick={handleCreateAssignment} className="bg-gray-500 text-white p-2 rounded mb-2">Guardar</button>
+          
+          <button 
+            onClick={handleCreateAssignment} 
+            className="bg-gray-500 text-white p-2 rounded mb-2 w-full md:w-auto"
+          >
+            Guardar
+          </button>
         </div>
       </div>
-      <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10 mt-6">
+      
+      <div className="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-0 mt-6">
         <table className="w-full table-fixed">
           <thead>
             <tr className="bg-gray-200">

@@ -14,7 +14,7 @@ const ModificarProyecto = () => {
         empresa_licitante: '',
         fecha_inicio: '',
         fecha_termino: '',
-        presupuesto: '',  // Añadido presupuesto
+        presupuesto: '',
         actividades: [],
     });
     const [actividadData, setActividadData] = useState({
@@ -115,7 +115,6 @@ const ModificarProyecto = () => {
         try {
             await addActividadToProyecto(proyectoData._id, actividadData);
             toast.success('Actividad añadida con éxito');
-            // Opcional: Limpiar el formulario de actividad
             setActividadData({
                 nombre: '',
                 descripcion: '',
@@ -141,208 +140,205 @@ const ModificarProyecto = () => {
     };
 
     return (
-        <div>
-            <div className="">
-                <div className='flex'>
-                    <h1 className="text-2xl font-bold text-blue-900">Modificar Proyecto</h1>
-                </div>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label htmlFor="proyectoSelect" className="block text-sm font-medium text-gray-700">Seleccionar Proyecto</label>
-                        <select
-                            id="proyectoSelect"
-                            value={selectedProyecto}
-                            onChange={handleSelectChange}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700"
-                        >
-                            <option value="">Seleccione un proyecto</option>
-                            {proyectos.map((proyecto) => (
-                                <option key={proyecto._id} value={proyecto._id}>
-                                    {proyecto.titulo}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    {selectedProyecto && (
-                        <div>
-                            <div className="mb-3">
-                                <label htmlFor="titulo" className="block text-sm font-medium text-gray-700">Título</label>
-                                <input
-                                    type="text"
-                                    id="titulo"
-                                    name="titulo"
-                                    value={proyectoData.titulo || ''}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700"
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700">Descripción</label>
-                                <textarea
-                                    id="descripcion"
-                                    name="descripcion"
-                                    value={proyectoData.descripcion || ''}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
-                                    rows="3"
-                                ></textarea>
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="empresa_licitante" className="block text-sm font-medium text-gray-700">Empresa Licitante</label>
-                                <input
-                                    type="text"
-                                    id="empresa_licitante"
-                                    name="empresa_licitante"
-                                    value={proyectoData.empresa_licitante || ''}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700"
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="fecha_inicio" className="block text-sm font-medium text-gray-700">Fecha de inicio</label>
-                                <input
-                                    type="date"
-                                    id="fecha_inicio"
-                                    name="fecha_inicio"
-                                    value={formatDateForInput(proyectoData.fecha_inicio)}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700"
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="fecha_termino" className="block text-sm font-medium text-gray-700">Fecha de término</label>
-                                <input
-                                    type="date"
-                                    id="fecha_termino"
-                                    name="fecha_termino"
-                                    value={formatDateForInput(proyectoData.fecha_termino)}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700"
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="presupuesto" className="block text-sm font-medium text-gray-700">Presupuesto</label>
-                                <input
-                                    type="number"
-                                    id="presupuesto"
-                                    name="presupuesto"
-                                    value={proyectoData.presupuesto || ''}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-300 text-gray-700"
-                                />
-                            </div>
-
-                            <button
-                                type="submit"
-                                className="flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                            >
-                                Modificar Proyecto
-                            </button>
-                        </div>
-                    )}
-                </form>
-
-                <div className="modify-project-actions mt-4">
-                    <button
-                        type="button"
-                        onClick={() => handleEliminarProyecto(proyectoData._id)}
-                        className="py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+        <div className="container mx-auto p-4 max-w-4xl">
+            <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center md:text-left">Modificar Proyecto</h1>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                    <label htmlFor="proyectoSelect" className="block text-sm font-medium text-gray-700">Seleccionar Proyecto</label>
+                    <select
+                        id="proyectoSelect"
+                        value={selectedProyecto}
+                        onChange={handleSelectChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
                     >
-                        Eliminar Proyecto
-                    </button>
+                        <option value="">Seleccione un proyecto</option>
+                        {proyectos.map((proyecto) => (
+                            <option key={proyecto._id} value={proyecto._id}>
+                                {proyecto.titulo}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
-                <div className="mt-8">
-                    <h2 className="text-xl font-bold text-gray-900">Añadir Actividad</h2>
-                    <form onSubmit={handleAddActividad} className="space-y-4">
-                        <div className="mb-4">
-                            <label htmlFor="nombre" className="block text-gray-700 font-medium mb-2">Nombre:</label>
+                {selectedProyecto && (
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div className="mb-3">
+                            <label htmlFor="titulo" className="block text-sm font-medium text-gray-700">Título</label>
                             <input
                                 type="text"
-                                id="nombre"
-                                name="nombre"
-                                value={actividadData.nombre}
-                                onChange={handleActividadInputChange}
-                                className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+                                id="titulo"
+                                name="titulo"
+                                value={proyectoData.titulo || ''}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
                             />
                         </div>
 
-                        <div className="mb-4">
-                            <label htmlFor="descripcion" className="block text-gray-700 font-medium mb-2">Descripción:</label>
+                        <div className="mb-3 col-span-full">
+                            <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700">Descripción</label>
                             <textarea
                                 id="descripcion"
                                 name="descripcion"
-                                value={actividadData.descripcion}
-                                onChange={handleActividadInputChange}
-                                className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+                                value={proyectoData.descripcion || ''}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
                                 rows="3"
                             ></textarea>
                         </div>
 
-                        <div className="mb-4">
-                            <label htmlFor="fecha_inicio" className="block text-gray-700 font-medium mb-2">Fecha de Inicio:</label>
+                        <div className="mb-3">
+                            <label htmlFor="empresa_licitante" className="block text-sm font-medium text-gray-700">Empresa Licitante</label>
+                            <input
+                                type="text"
+                                id="empresa_licitante"
+                                name="empresa_licitante"
+                                value={proyectoData.empresa_licitante || ''}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
+                            />
+                        </div>
+
+                        <div className="mb-3">
+                            <label htmlFor="fecha_inicio" className="block text-sm font-medium text-gray-700">Fecha de inicio</label>
                             <input
                                 type="date"
                                 id="fecha_inicio"
                                 name="fecha_inicio"
-                                value={actividadData.fecha_inicio}
-                                onChange={handleActividadInputChange}
-                                className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+                                value={formatDateForInput(proyectoData.fecha_inicio)}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
                             />
                         </div>
 
-                        <div className="mb-4">
-                            <label htmlFor="fecha_termino" className="block text-gray-700 font-medium mb-2">Fecha de Término:</label>
+                        <div className="mb-3">
+                            <label htmlFor="fecha_termino" className="block text-sm font-medium text-gray-700">Fecha de término</label>
                             <input
                                 type="date"
                                 id="fecha_termino"
                                 name="fecha_termino"
-                                value={actividadData.fecha_termino}
-                                onChange={handleActividadInputChange}
-                                className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+                                value={formatDateForInput(proyectoData.fecha_termino)}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
                             />
                         </div>
 
-                        <div className="mb-4">
-                            <label htmlFor="responsable" className="block text-gray-700 font-medium mb-2">Responsable:</label>
+                        <div className="mb-3">
+                            <label htmlFor="presupuesto" className="block text-sm font-medium text-gray-700">Presupuesto</label>
                             <input
-                                type="text"
-                                id="responsable"
-                                name="responsable"
-                                value={actividadData.responsable}
-                                onChange={handleActividadInputChange}
-                                className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+                                type="number"
+                                id="presupuesto"
+                                name="presupuesto"
+                                value={proyectoData.presupuesto || ''}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-gray-700"
                             />
                         </div>
+                    </div>
+                )}
 
-                        <div className="mb-4">
-                            <label htmlFor="estado" className="block text-gray-700 font-medium mb-2">Estado:</label>
-                            <select
-                                id="estado"
-                                name="estado"
-                                value={actividadData.estado}
-                                onChange={handleActividadInputChange}
-                                className="p-2 border border-gray-300 rounded-md shadow-sm w-full text-black"
-                            >
-                                <option value={false}>Incompleto</option>
-                                <option value={true}>Completo</option>
-                            </select>
-                        </div>
+                <button
+                    type="submit"
+                    className="w-full md:w-auto py-2 px-4 mt-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray
+                    -500"
+                >
+                    Modificar Proyecto
+                </button>
+            </form>
 
-                        <button
-                            type="submit"
-                            className="flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-gray-700 bg-gray-300 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            <div className="modify-project-actions mt-4 text-center md:text-right">
+                <button
+                    type="button"
+                    onClick={() => handleEliminarProyecto(proyectoData._id)}
+                    className="w-full md:w-auto py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                >
+                    Eliminar Proyecto
+                </button>
+            </div>
+
+            <div className="mt-8">
+                <h2 className="text-xl font-bold text-gray-900 text-center md:text-left mb-4">Añadir Actividad</h2>
+                <form onSubmit={handleAddActividad} className="space-y-4">
+                    <div className="mb-4">
+                        <label htmlFor="nombre" className="block text-gray-700 font-medium mb-2">Nombre:</label>
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            value={actividadData.nombre}
+                            onChange={handleActividadInputChange}
+                            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label htmlFor="descripcion" className="block text-gray-700 font-medium mb-2">Descripción:</label>
+                        <textarea
+                            id="descripcion"
+                            name="descripcion"
+                            value={actividadData.descripcion}
+                            onChange={handleActividadInputChange}
+                            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+                            rows="3"
+                        ></textarea>
+                    </div>
+
+                    <div className="mb-4">
+                        <label htmlFor="fecha_inicio" className="block text-gray-700 font-medium mb-2">Fecha de Inicio:</label>
+                        <input
+                            type="date"
+                            id="fecha_inicio"
+                            name="fecha_inicio"
+                            value={actividadData.fecha_inicio}
+                            onChange={handleActividadInputChange}
+                            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label htmlFor="fecha_termino" className="block text-gray-700 font-medium mb-2">Fecha de Término:</label>
+                        <input
+                            type="date"
+                            id="fecha_termino"
+                            name="fecha_termino"
+                            value={actividadData.fecha_termino}
+                            onChange={handleActividadInputChange}
+                            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label htmlFor="responsable" className="block text-gray-700 font-medium mb-2">Responsable:</label>
+                        <input
+                            type="text"
+                            id="responsable"
+                            name="responsable"
+                            value={actividadData.responsable}
+                            onChange={handleActividadInputChange}
+                            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label htmlFor="estado" className="block text-gray-700 font-medium mb-2">Estado:</label>
+                        <select
+                            id="estado"
+                            name="estado"
+                            value={actividadData.estado}
+                            onChange={handleActividadInputChange}
+                            className="p-2 border border-gray-300 rounded-md shadow-sm w-full text-black"
                         >
-                            Añadir Actividad
-                        </button>
-                    </form>
-                </div>
+                            <option value={false}>Incompleto</option>
+                            <option value={true}>Completo</option>
+                        </select>
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full md:w-auto py-2 px-4 mt-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-gray-700 bg-gray-300 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    >
+                        Añadir Actividad
+                    </button>
+                </form>
             </div>
         </div>
     );

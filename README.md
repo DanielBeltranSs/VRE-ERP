@@ -1,14 +1,1 @@
-# Grupo 7
--- Creacion de un ERP 
-
-Integrantes:
-
--Brian Alarcon
-
--Daniel Beltran
-
--Felipe Burgos
-
--Johan Rodriguez
-
--Sebastian Gonzales
+# ERP Para Constructora Vladimir Robinson Endia E.I.R.L

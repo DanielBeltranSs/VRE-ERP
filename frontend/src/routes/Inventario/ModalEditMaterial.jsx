@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
+import { updateMaterial } from '../../services/material.service';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { createMaterial } from '../../services/material.service';
 
-const ModalAddMaterial = ({ isOpen, onClose }) => {
-    const [material, setMaterial] = useState({
+const ModalEditMaterial = ({ isOpen, onClose, material }) => {
+    const [materialState, setMaterialState] = useState({
         nombre: '',
         descripcion: '',
         tipo: '',
@@ -13,39 +13,42 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
         codigoBarra: '',
     });
 
+    // Establecer los valores iniciales al recibir los datos de material
+    useEffect(() => {
+        if (material && material.data) {
+            const { nombre, descripcion, tipo, unidad, codigoBarra } = material.data;
+            setMaterialState({
+                nombre: nombre || '',
+                descripcion: descripcion || '',
+                tipo: tipo || '',
+                unidad: unidad || '',
+                codigoBarra: codigoBarra || '', // Maneja el código de barras opcional
+            });
+        }
+    }, [material]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setMaterial({ ...material, [name]: value });
+        setMaterialState({ ...materialState, [name]: value });
     };
 
+    // Evita el envío del formulario al presionar Enter en el campo de código de barras
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Evita el envío automático al presionar Enter
+            e.preventDefault(); // Evita que el Enter provoque el envío del formulario
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const newMaterial = {
-                nombre: material.nombre,
-                descripcion: material.descripcion,
-                tipo: material.tipo,
-                unidad: material.unidad,
-                codigoBarra: material.codigoBarra || undefined, // Código de barra opcional
-            };
-            await createMaterial(newMaterial);
-            toast.success('Material/Herramienta creado con éxito');
-            setMaterial({
-                nombre: '',
-                descripcion: '',
-                tipo: '',
-                unidad: '',
-                codigoBarra: '',
-            });
-        } catch (error) {
-            console.error('Error al crear Material/Herramienta:', error);
-            toast.error('Error al crear Material/Herramienta');
+            await updateMaterial(material.data._id, materialState);
+            toast.success('Material modificado exitosamente');
+            setTimeout(() => {
+                onClose(); // Cierra el modal después de un retraso de 2 segundos
+            }, 2000);        } catch (error) {
+            console.error('Error al modificar el material:', error);
+            toast.error(error.response?.data?.message || 'Hubo un error al modificar el material');
         }
     };
 
@@ -53,12 +56,12 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
         <Modal
             isOpen={isOpen}
             onRequestClose={onClose}
-            contentLabel="Formulario de Material/Herramienta"
+            contentLabel="Formulario de Edición de Material/Herramienta"
             className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-2xl rounded-md p-5 w-full sm:w-2/3 md:w-1/3"
         >
             <ToastContainer />
             <div className="flex justify-between items-center mb-4 text-gray-800">
-                <h2 className="text-lg font-bold">Registrar Nueva Herramienta o Material</h2>
+                <h2 className="text-lg font-bold">Editar Herramienta o Material</h2>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
@@ -67,7 +70,7 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
                         type="text"
                         id="nombre"
                         name="nombre"
-                        value={material.nombre}
+                        value={materialState.nombre}
                         onChange={handleInputChange}
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
                         autoComplete="off"
@@ -80,7 +83,7 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
                         type="text"
                         id="descripcion"
                         name="descripcion"
-                        value={material.descripcion}
+                        value={materialState.descripcion}
                         onChange={handleInputChange}
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
                         autoComplete="off"
@@ -93,20 +96,20 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
                         type="text"
                         id="codigoBarra"
                         name="codigoBarra"
-                        value={material.codigoBarra}
+                        value={materialState.codigoBarra}
                         onChange={handleInputChange}
-                        onKeyPress={handleKeyPress} // Evita el envío con Enter
+                        onKeyPress={handleKeyPress} // Evita el Enter en este campo
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
                         autoComplete="off"
                     />
                 </div>
-                <div className='flex gap-4'>
+                <div className="flex gap-4">
                     <div className="w-full">
                         <label className="block text-sm font-medium text-gray-700">Tipo</label>
                         <select
-                            id='tipo'
-                            name='tipo'
-                            value={material.tipo}
+                            id="tipo"
+                            name="tipo"
+                            value={materialState.tipo}
                             onChange={handleInputChange}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
                             required
@@ -119,9 +122,9 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
                     <div className="w-full">
                         <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
                         <select
-                            id='unidad'
-                            name='unidad'
-                            value={material.unidad}
+                            id="unidad"
+                            name="unidad"
+                            value={materialState.unidad}
                             onChange={handleInputChange}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
                             required
@@ -145,18 +148,19 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
                         </select>
                     </div>
                 </div>
-                <div>
+                <div className="flex justify-end gap-2">
                     <button
-                        type="submit"
-                        className="bg-gray-700 hover:bg-gray-500 text-white py-2 px-4 rounded-md mr-2"
+                        type="button"
+                        onClick={onClose}
+                        className="bg-gray-600 hover:bg-gray-500 text-white py-2 px-4 rounded-md"
                     >
-                        Registrar
+                        Salir
                     </button>
                     <button
-                        onClick={onClose}
-                        className="bg-gray-700 hover:bg-gray-500 py-2 px-4 rounded-md"
+                        type="submit"
+                        className="bg-gray-700 hover:bg-gray-500 text-white py-2 px-4 rounded-md"
                     >
-                        Cancelar
+                        Actualizar
                     </button>
                 </div>
             </form>
@@ -164,4 +168,4 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
     );
 };
 
-export default ModalAddMaterial;
+export default ModalEditMaterial;

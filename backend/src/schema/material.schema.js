@@ -23,7 +23,7 @@ const materialBodySchema = Joi.object({
     descripcion: Joi.string().min(2).max(400).required(),
     tipo: Joi.string().min(2).max(200).required(),
     unidad: Joi.string().min(1).max(200).required(),
-    codigoBarra: Joi.string().optional()  // Asegúrate de que sea opcional si no se envía
+    codigoBarra: Joi.string().optional()// Asegúrate de que sea opcional si no se envía
 }).messages({
     "object.unknown": "No se permiten propiedades adicionales.",
 });

@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { getMaterial, deleteMaterial } from "../../services/material.service";
+import { getMaterial, deleteMaterial, getMaterialById, updateMaterial } from "../../services/material.service";
 import ModalAddMaterial from "./ModalAddMaterial";
-import { useNavigate } from 'react-router-dom';
+import ModalEditMaterial from "./ModalEditMaterial"; // Importa el modal de edición
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Material = () => {
-    const navigate = useNavigate();
     const [material, setMaterial] = useState([]);
-    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [selectedMaterial, setSelectedMaterial] = useState(null); // Almacena el material a editar
 
     useEffect(() => {
         fetchMaterialData();
@@ -21,26 +22,47 @@ const Material = () => {
             setMaterial(data);
         } catch (error) {
             console.error('Error fetching material data:', error);
+            toast.error("Error al cargar los materiales");
         }
     };
 
-    const openModal = () => {
-        setModalIsOpen(true);
+    const openAddModal = () => {
+        setIsAddModalOpen(true);
     };
 
-    const closeModal = () => {
-        setModalIsOpen(false);
+    const closeAddModal = () => {
+        setIsAddModalOpen(false);
+        fetchMaterialData();
+    };
+
+    const openEditModal = async (id) => {
+        try {
+            const materialData = await getMaterialById(id);
+            setSelectedMaterial(materialData); // Configura el material seleccionado
+            setIsEditModalOpen(true);
+        } catch (error) {
+            console.error('Error al obtener el material:', error);
+            toast.error("Error al obtener los detalles del material");
+        }
+    };
+
+    const closeEditModal = () => {
+        setIsEditModalOpen(false);
+        setSelectedMaterial(null);
         fetchMaterialData();
     };
 
     const handleDelete = async (id) => {
-        try {
-            await deleteMaterial(id);
-            toast.success("Material eliminado con éxito");
-            fetchMaterialData();
-        } catch (error) {
-            console.error("Error al eliminar material:", error);
-            toast.error("Error al eliminar material");
+        const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este material?");
+        if (confirmDelete) {
+            try {
+                await deleteMaterial(id);
+                toast.success("Material eliminado con éxito");
+                fetchMaterialData();
+            } catch (error) {
+                console.error("Error al eliminar material:", error);
+                toast.error("Error al eliminar material");
+            }
         }
     };
 
@@ -53,16 +75,23 @@ const Material = () => {
 
             <div className="flex justify-end mb-4">
                 <button 
-                    onClick={openModal} 
+                    onClick={openAddModal} 
                     className="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-500 hover:bg-gray-600 transition-all"
                 >
                     Registrar Material
                 </button>
             </div>
 
-            <ModalAddMaterial isOpen={modalIsOpen} onClose={closeModal} />
+            <ModalAddMaterial isOpen={isAddModalOpen} onClose={closeAddModal} />
+            {selectedMaterial && (
+                <ModalEditMaterial
+                    isOpen={isEditModalOpen}
+                    onClose={closeEditModal}
+                    material={selectedMaterial} // Pasa el material seleccionado al modal
+                />
+            )}
 
-            {/* Aquí hacemos la tabla desplazable en pantallas pequeñas */}
+            {/* Tabla para listar los materiales */}
             <div className="shadow-lg rounded-lg overflow-x-auto">
                 <table className="min-w-full table-auto">
                     <thead>
@@ -82,27 +111,29 @@ const Material = () => {
                                     <td className="py-4 px-6 border-b border-gray-200">{item.descripcion}</td>
                                     <td className="py-4 px-6 border-b border-gray-200">{item.tipo}</td>
                                     <td className="py-4 px-6 border-b border-gray-200">{item.unidad}</td>
-                                    <td className="py-4 px-6 border-b border-gray-200 text-center flex space-x-2">
-                                        <button 
-                                            onClick={() => navigate(`/inventario/material/editar/${item._id}`)} 
-                                            className="bg-gray-600 hover:bg-gray-500 transition-all py-1 px-2 rounded-md flex justify-center items-center"
-                                        >
-                                            <img 
-                                                className="w-5 h-5" 
-                                                src={`${import.meta.env.VITE_BASE_URL}/uploads/editar.png`} 
-                                                alt="Editar" 
-                                            />
-                                        </button>
-                                        <button 
-                                            onClick={() => handleDelete(item._id)} 
-                                            className="bg-gray-600 hover:bg-gray-500 transition-all py-1 px-2 rounded-md flex justify-center items-center"
-                                        >
-                                            <img 
-                                                className="w-5 h-5" 
-                                                src={`${import.meta.env.VITE_BASE_URL}/uploads/eliminar.png`} 
-                                                alt="Eliminar" 
-                                            />
-                                        </button>
+                                    <td className="py-4 px-6 border-b border-gray-200 text-center">
+                                        <div className="flex justify-center space-x-2">
+                                            <button 
+                                                onClick={() => openEditModal(item._id)} 
+                                                className="bg-gray-600 hover:bg-gray-500 transition-all py-1 px-2 rounded-md"
+                                            >
+                                                <img 
+                                                    className="w-5 h-5" 
+                                                    src={`${import.meta.env.VITE_BASE_URL}/uploads/editar.png`} 
+                                                    alt="Editar" 
+                                                />
+                                            </button>
+                                            <button 
+                                                onClick={() => handleDelete(item._id)} 
+                                                className="bg-gray-600 hover:bg-gray-500 transition-all py-1 px-2 rounded-md"
+                                            >
+                                                <img 
+                                                    className="w-5 h-5" 
+                                                    src={`${import.meta.env.VITE_BASE_URL}/uploads/eliminar.png`} 
+                                                    alt="Eliminar" 
+                                                />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))

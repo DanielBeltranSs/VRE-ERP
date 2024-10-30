@@ -1,18 +1,27 @@
 import { useState } from 'react';
 import Modal from 'react-modal';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { createMaterial } from '../../services/material.service';
 
-const ModalAddMaterial = ({ isOpen, onClose}) => {
+const ModalAddMaterial = ({ isOpen, onClose }) => {
     const [material, setMaterial] = useState({
         nombre: '',
         descripcion: '',
         tipo: '',
         unidad: '',
+        codigoBarra: '',
     });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setMaterial({ ...material, [name]: value });
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Evita el envío automático al presionar Enter
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -23,18 +32,23 @@ const ModalAddMaterial = ({ isOpen, onClose}) => {
                 descripcion: material.descripcion,
                 tipo: material.tipo,
                 unidad: material.unidad,
+                codigoBarra: material.codigoBarra,
             };
             await createMaterial(newMaterial);
-            alert('Material/Herramienta creado con éxito');
-            onClose();
+            toast.success('Material/Herramienta creado con éxito');
+            setTimeout(() => {
+                onClose(); // Cierra el modal después de mostrar el mensaje
+            }, 1000);
             setMaterial({
                 nombre: '',
                 descripcion: '',
                 tipo: '',
                 unidad: '',
+                codigoBarra: '',
             });
         } catch (error) {
             console.error('Error al crear Material/Herramienta:', error);
+            toast.error('Error al crear Material/Herramienta');
         }
     };
 
@@ -43,8 +57,9 @@ const ModalAddMaterial = ({ isOpen, onClose}) => {
             isOpen={isOpen}
             onRequestClose={onClose}
             contentLabel="Formulario de Material/Herramienta"
-            className={'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-2xl rounded-md p-5 w-full sm:w-2/3 md:w-1/3'}
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-2xl rounded-md p-5 w-full sm:w-2/3 md:w-1/3"
         >
+            <ToastContainer />
             <div className="flex justify-between items-center mb-4 text-gray-800">
                 <h2 className="text-lg font-bold">Registrar Nueva Herramienta o Material</h2>
             </div>
@@ -53,24 +68,37 @@ const ModalAddMaterial = ({ isOpen, onClose}) => {
                     <label className="block text-sm font-medium text-gray-700">Nombre</label>
                     <input
                         type="text"
-                        id='nombre'
-                        name='nombre'
+                        id="nombre"
+                        name="nombre"
                         value={material.nombre}
-                        onChange={(e) => handleInputChange(e)}
+                        onChange={handleInputChange}
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
-                        autoComplete='off'
+                        autoComplete="off"
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Descripcion</label>
+                    <label className="block text-sm font-medium text-gray-700">Descripción</label>
                     <input
                         type="text"
-                        id='descripcion'
-                        name='descripcion'
+                        id="descripcion"
+                        name="descripcion"
                         value={material.descripcion}
-                        onChange={(e) => handleInputChange(e)}
+                        onChange={handleInputChange}
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
-                        autoComplete='off'
+                        autoComplete="off"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Código de Barras</label>
+                    <input
+                        type="text"
+                        id="codigoBarra"
+                        name="codigoBarra"
+                        value={material.codigoBarra}
+                        onChange={handleInputChange}
+                        onKeyPress={handleKeyPress} // Evita el envío con Enter
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
+                        autoComplete="off"
                     />
                 </div>
                 <div className='flex gap-4'>
@@ -80,7 +108,7 @@ const ModalAddMaterial = ({ isOpen, onClose}) => {
                             id='tipo'
                             name='tipo'
                             value={material.tipo}
-                            onChange={(e) => handleInputChange(e)}
+                            onChange={handleInputChange}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
                         >
                             <option value="">Seleccionar tipo de material</option>
@@ -94,7 +122,7 @@ const ModalAddMaterial = ({ isOpen, onClose}) => {
                             id='unidad'
                             name='unidad'
                             value={material.unidad}
-                            onChange={(e) => handleInputChange(e)}
+                            onChange={handleInputChange}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
                         >
                             <option value="">Seleccionar unidad de medida</option>

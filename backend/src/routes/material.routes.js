@@ -8,11 +8,15 @@ const router = express.Router();
 // Define el middleware de autenticación para todas las rutas
 router.use(authenticationMiddleware);
 
-// Rutas para obtener publicaciones del foro
+// Rutas para obtener y crear materiales
 router.get("/", materialController.getMaterial);
 router.get("/:id", materialController.getMaterialById);
 router.post("/", materialController.createMaterial);
-// Rutas para crear, actualizar y eliminar publicaciones del foro
+
+// Nueva ruta para obtener un material por código de barra
+router.get("/codigoBarra/:codigoBarra", materialController.getMaterialByBarcode);
+
+// Rutas para actualizar y eliminar materiales
 router.put("/:id", materialController.updateMaterial);
 router.delete("/:id", materialController.deleteMaterial);
 

@@ -7,6 +7,7 @@ const MaterialSchema = new mongoose.Schema({
     descripcion: { type: String, required: true },
     tipo: { type: String, required: true },
     unidad: { type: String, required: true },
+    codigoBarra: { type: String, required: false, unique: true },
 });
 
 module.exports = mongoose.model('Material', MaterialSchema);

@@ -1,9 +1,12 @@
+"use strict";
+
 const { respondSuccess, respondError } = require("../utils/resHandler");
 const { handleError } = require("../utils/errorHandler");
 const { respondInternalError } = require("../utils/resHandler");
 const materialService = require("../services/material.service"); 
 const { materialBodySchema, materialId } = require("../schema/material.schema");
 
+// Obtener todos los materiales
 async function getMaterial(req, res) {
   try {
     const [Material, errorMaterial] = await materialService.getMaterial();
@@ -18,6 +21,7 @@ async function getMaterial(req, res) {
   }
 }
 
+// Crear un material nuevo
 async function createMaterial(req, res) {
   try {
     const { body } = req;
@@ -28,16 +32,17 @@ async function createMaterial(req, res) {
 
     if (MaterialError) return respondError(req, res, 400, MaterialError);
     if (!newMaterial) {
-      return respondError(req, res, 400, "No se ingreso el inventario correctamente");
+      return respondError(req, res, 400, "No se ingresó el inventario correctamente");
     }
 
     respondSuccess(req, res, 201, newMaterial);
   } catch (error) {
     handleError(error, "Material.controller -> createMaterial");
-    respondError(req, res, 500, "No se ingreso el Material correctamente");
+    respondError(req, res, 500, "No se ingresó el Material correctamente");
   }
 }
 
+// Obtener un material por ID
 async function getMaterialById(req, res) {
   try {
     const { params } = req;
@@ -55,6 +60,7 @@ async function getMaterialById(req, res) {
   }
 }
 
+// Actualizar un material
 async function updateMaterial(req, res) {
   try {
     const { params, body } = req;
@@ -75,6 +81,7 @@ async function updateMaterial(req, res) {
   }
 }
 
+// Eliminar un material
 async function deleteMaterial(req, res) {
   try {
     const { params } = req;
@@ -92,10 +99,26 @@ async function deleteMaterial(req, res) {
   }
 }
 
+// Obtener un material por código de barra
+async function getMaterialByBarcode(req, res) {
+  try {
+    const { codigoBarra } = req.params;
+    const [material, errorMaterial] = await materialService.getMaterialByBarcode(codigoBarra);
+
+    if (errorMaterial) return respondError(req, res, 404, "Material no encontrado con el código de barra proporcionado");
+
+    respondSuccess(req, res, 200, material);
+  } catch (error) {
+    handleError(error, "Material.controller -> getMaterialByBarcode");
+    respondInternalError(req, res);
+  }
+}
+
 module.exports = {
     getMaterial,
     createMaterial,
     getMaterialById,
     updateMaterial,
     deleteMaterial,
+    getMaterialByBarcode, // Exportar la nueva función
 };

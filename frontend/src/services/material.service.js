@@ -29,7 +29,7 @@ export const createMaterial = async (material) => {
   try {
       const response = await axios.post('/material', material);
       console.log(response);
-      if (response.status === 200) {
+      if (response.status === 201) {
         return response.data;
       }
     } catch (error) {
@@ -42,7 +42,7 @@ export const updateMaterial = async (id, material) => {
     try {
       const response = await axios.put(`/material/${id}`, material);
       console.log(response);
-      if (response.status === 200) {
+      if (response.status === 201) {
         return response.data;
       }
     } catch (error) {
@@ -56,7 +56,7 @@ export const deleteMaterial= async (id) => {
     try {
       const response = await axios.delete(`/material/${id}`);
   
-      if (response.status === 200) {
+      if (response.status === 201) {
         return response.data;
       }
     } catch (error) {

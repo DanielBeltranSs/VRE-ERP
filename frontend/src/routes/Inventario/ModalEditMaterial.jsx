@@ -46,7 +46,7 @@ const ModalEditMaterial = ({ isOpen, onClose, material }) => {
             toast.success('Material modificado exitosamente');
             setTimeout(() => {
                 onClose(); // Cierra el modal después de un retraso de 2 segundos
-            }, 2000);        } catch (error) {
+            }, 2500);        } catch (error) {
             console.error('Error al modificar el material:', error);
             toast.error(error.response?.data?.message || 'Hubo un error al modificar el material');
         }

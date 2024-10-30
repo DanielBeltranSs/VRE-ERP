@@ -1,46 +1,66 @@
 "use strict";
 
-const { respondSuccess, respondError } = require("../utils/resHandler");
+const { respondSuccess, respondError, respondInternalError } = require("../utils/resHandler");
 const { handleError } = require("../utils/errorHandler");
-const { respondInternalError } = require("../utils/resHandler");
-const materialService = require("../services/material.service"); 
+const materialService = require("../services/material.service");
 const { materialBodySchema, materialId } = require("../schema/material.schema");
+const multer = require("multer");
+const path = require("path");
+
+// Configuración de multer para almacenamiento de imágenes de materiales
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../../uploads")); // Carpeta de almacenamiento de imágenes
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+
+const upload = multer({ storage: storage });
+exports.upload = upload; // Exportar el middleware de carga
 
 // Obtener todos los materiales
 async function getMaterial(req, res) {
   try {
-    const [Material, errorMaterial] = await materialService.getMaterial();
-    if (errorMaterial) return respondError(req, res, 404, errorMaterial);
+    const [materials, error] = await materialService.getMaterial();
+    if (error) return respondError(req, res, 404, error);
 
-    Material.length === 0
+    materials.length === 0
       ? respondSuccess(req, res, 204)
-      : respondSuccess(req, res, 200, Material);
+      : respondSuccess(req, res, 200, materials);
   } catch (error) {
     handleError(error, "Material.controller -> getMaterial");
     respondError(req, res, 400, error.message);
   }
 }
 
-// Crear un material nuevo
+// Crear un nuevo material con imagen opcional
 async function createMaterial(req, res) {
   try {
-    const { body } = req;
-    const { error: bodyError } = materialBodySchema.validate(body);
-    if (bodyError) return respondError(req, res, 400, bodyError.message);
+      console.log("Body received:", req.body);
+      console.log("File received:", req.file);
 
-    const [newMaterial, MaterialError] = await materialService.createMaterial(body);
+      const { body } = req;
+      const { error: bodyError } = materialBodySchema.validate(body);
+      if (bodyError) return respondError(req, res, 400, bodyError.message);
 
-    if (MaterialError) return respondError(req, res, 400, MaterialError);
-    if (!newMaterial) {
-      return respondError(req, res, 400, "No se ingresó el inventario correctamente");
-    }
+      // Si hay archivo, añade la URL de la imagen
+      if (req.file) {
+          body.imageUrl = `/uploads/${req.file.filename}`;
+      }
 
-    respondSuccess(req, res, 201, newMaterial);
+      const [newMaterial, error] = await materialService.createMaterial(body);
+      if (error) return respondError(req, res, 400, error);
+
+      respondSuccess(req, res, 201, newMaterial);
   } catch (error) {
-    handleError(error, "Material.controller -> createMaterial");
-    respondError(req, res, 500, "No se ingresó el Material correctamente");
+      console.error("Error en createMaterial:", error); // Log del error completo
+      handleError(error, "Material.controller -> createMaterial");
+      respondError(req, res, 500, "No se pudo crear el material");
   }
 }
+
 
 // Obtener un material por ID
 async function getMaterialById(req, res) {
@@ -50,31 +70,31 @@ async function getMaterialById(req, res) {
     if (paramsError) return respondError(req, res, 400, paramsError.message);
 
     const { id } = params;
-    const [Material, errorMaterial] = await materialService.getMaterialById(id);
-    if (errorMaterial) return respondError(req, res, 404, errorMaterial);
+    const [material, error] = await materialService.getMaterialById(id);
+    if (error) return respondError(req, res, 404, error);
 
-    respondSuccess(req, res, 200, Material);
+    respondSuccess(req, res, 200, material);
   } catch (error) {
     handleError(error, "Material.controller -> getMaterialById");
     respondInternalError(req, res);
   }
 }
 
-// Actualizar un material
+// Actualizar un material con imagen opcional
 async function updateMaterial(req, res) {
   try {
     const { params, body } = req;
     const { error: paramsError } = materialId.validate(params);
     if (paramsError) return respondError(req, res, 400, paramsError.message);
 
-    const { id } = params;
-    const { error: bodyError } = materialBodySchema.validate(body);
-    if (bodyError) return respondError(req, res, 400, bodyError.message);
+    if (req.file) {
+      body.imageUrl = `/uploads/${req.file.filename}`;
+    }
 
-    const [Material, errorMaterial] = await materialService.updateMaterial(id, body);
-    if (errorMaterial) return respondError(req, res, 404, errorMaterial);
+    const [updatedMaterial, error] = await materialService.updateMaterial(params.id, body);
+    if (error) return respondError(req, res, 404, error);
 
-    respondSuccess(req, res, 200, Material);
+    respondSuccess(req, res, 200, updatedMaterial);
   } catch (error) {
     handleError(error, "Material.controller -> updateMaterial");
     respondInternalError(req, res);
@@ -89,23 +109,22 @@ async function deleteMaterial(req, res) {
     if (paramsError) return respondError(req, res, 400, paramsError.message);
 
     const { id } = params;
-    const [Material, errorMaterial] = await materialService.deleteMaterial(id);
-    if (errorMaterial) return respondError(req, res, 404, errorMaterial);
+    const [deletedMaterial, error] = await materialService.deleteMaterial(id);
+    if (error) return respondError(req, res, 404, error);
 
-    respondSuccess(req, res, 200, Material);
+    respondSuccess(req, res, 200, deletedMaterial);
   } catch (error) {
     handleError(error, "Material.controller -> deleteMaterial");
     respondInternalError(req, res);
   }
 }
 
-// Obtener un material por código de barra
+// Obtener un material por código de barras
 async function getMaterialByBarcode(req, res) {
   try {
     const { codigoBarra } = req.params;
-    const [material, errorMaterial] = await materialService.getMaterialByBarcode(codigoBarra);
-
-    if (errorMaterial) return respondError(req, res, 404, "Material no encontrado con el código de barra proporcionado");
+    const [material, error] = await materialService.getMaterialByBarcode(codigoBarra);
+    if (error) return respondError(req, res, 404, "Material no encontrado con el código de barra proporcionado");
 
     respondSuccess(req, res, 200, material);
   } catch (error) {
@@ -115,10 +134,11 @@ async function getMaterialByBarcode(req, res) {
 }
 
 module.exports = {
-    getMaterial,
-    createMaterial,
-    getMaterialById,
-    updateMaterial,
-    deleteMaterial,
-    getMaterialByBarcode, // Exportar la nueva función
+  getMaterial,
+  createMaterial,
+  getMaterialById,
+  updateMaterial,
+  deleteMaterial,
+  getMaterialByBarcode,
+  upload, // Exportar `upload` para manejo de archivos
 };

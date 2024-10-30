@@ -11,11 +11,16 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
         tipo: '',
         unidad: '',
         codigoBarra: '',
+        imageFile: null, // Campo para almacenar la imagen
     });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setMaterial({ ...material, [name]: value });
+    };
+
+    const handleFileChange = (e) => {
+        setMaterial({ ...material, image: e.target.files[0] });
     };
 
     const handleKeyPress = (e) => {
@@ -27,14 +32,7 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const newMaterial = {
-                nombre: material.nombre,
-                descripcion: material.descripcion,
-                tipo: material.tipo,
-                unidad: material.unidad,
-                codigoBarra: material.codigoBarra || undefined, // Código de barra opcional
-            };
-            await createMaterial(newMaterial);
+            await createMaterial(material);
             toast.success('Material/Herramienta creado con éxito');
             setMaterial({
                 nombre: '',
@@ -42,6 +40,7 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
                 tipo: '',
                 unidad: '',
                 codigoBarra: '',
+                imageFile: null,
             });
         } catch (error) {
             console.error('Error al crear Material/Herramienta:', error);
@@ -144,6 +143,15 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
                             <option value="otro">Metro cúbico</option>
                         </select>
                     </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Imagen (Opcional)</label>
+                    <input
+                        type="file"
+                        name="image"
+                        onChange={handleFileChange}
+                        className="mt-1 block w-full text-gray-700"
+                    />
                 </div>
                 <div>
                     <button

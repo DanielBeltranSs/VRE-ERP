@@ -59,24 +59,29 @@ async function getMaterialByBarcode(codigoBarra) {
 
 async function updateMaterial(id, material) {
     try {
-      const updatedMaterial = await Material.findByIdAndUpdate(
-        id,
-        {
-          nombre: material.nombre,
-          descripcion: material.descripcion,
-          tipo: material.tipo,
-          unidad: material.unidad,
-          codigoBarra: material.codigoBarra || null,
-          imageUrl: material.imageUrl || null, // Actualizar URL de imagen
-        },
-        { new: true }
-      );
-      return [updatedMaterial, null];
+        // Obtén el material actual de la base de datos
+        const currentMaterial = await Material.findById(id).exec();
+        if (!currentMaterial) return [null, "El Material no existe"];
+
+        // Si no se proporciona una nueva URL de imagen, mantén la existente
+        const updatedData = {
+            nombre: material.nombre || currentMaterial.nombre,
+            descripcion: material.descripcion || currentMaterial.descripcion,
+            tipo: material.tipo || currentMaterial.tipo,
+            unidad: material.unidad || currentMaterial.unidad,
+            codigoBarra: material.codigoBarra || currentMaterial.codigoBarra,
+            imageUrl: material.imageUrl || currentMaterial.imageUrl, // Mantén la imagen existente si no se envía una nueva
+        };
+
+        // Realiza la actualización con los datos modificados
+        const updatedMaterial = await Material.findByIdAndUpdate(id, updatedData, { new: true });
+        return [updatedMaterial, null];
     } catch (error) {
-      handleError(error, "Material.service -> updateMaterial");
-      return [null, error.message];
+        handleError(error, "Material.service -> updateMaterial");
+        return [null, error.message];
     }
-  }
+}
+
 
 async function deleteMaterial(id) {
     try {

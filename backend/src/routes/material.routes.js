@@ -11,11 +11,11 @@ router.use(authenticationMiddleware);
 // Ruta para obtener todos los materiales
 router.get("/", materialController.getMaterial);
 
-// Ruta para obtener un material por ID
-router.get("/:id", materialController.getMaterialById);
-
 // Ruta para obtener un material por código de barra
 router.get("/codigoBarra/:codigoBarra", materialController.getMaterialByBarcode);
+
+// Ruta para obtener un material por ID
+router.get("/:id", materialController.getMaterialById);
 
 // Ruta para crear un nuevo material con opción de subir imagen
 router.post("/uploadPhoto", materialController.upload.single("image"), materialController.createMaterial);

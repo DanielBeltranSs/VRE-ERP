@@ -33,57 +33,53 @@ export const getMaterialById = async (id) => {
 
 // Crear un nuevo material con imagen opcional
 
-export const createMaterial = async (materialData) => {
-  const formData = new FormData();
-  for (let key in materialData) {
-      formData.append(key, materialData[key]);
+export const createMaterial = async (formData) => {
+  try {
+      const response = await axios.post('/material/uploadPhoto', formData, {
+          headers: {
+              "Content-Type": "multipart/form-data",
+          },
+      });
+      toast.success('Material creado con éxito');
+      return response.data;
+  } catch (error) {
+      console.error('Error al crear material:', error);
+      const errorMessage = error.response?.data?.message || 'Error al crear material';
+      toast.error(errorMessage);
+      throw error;
   }
-  if (materialData.image) {
-      formData.append("image", materialData.image);  // Nombre del campo "image"
-  }
-
-  const response = await axios.post('/material/uploadPhoto', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-  });
-  return response.data;
 };
 
 
 
 // Actualizar un material existente con imagen opcional
-export const updateMaterial = async (id, materialData) => {
-    try {
-        const formData = new FormData();
-        
-        // Agrega los datos del material a formData
-        formData.append("nombre", materialData.nombre);
-        formData.append("descripcion", materialData.descripcion);
-        formData.append("tipo", materialData.tipo);
-        formData.append("unidad", materialData.unidad);
-        formData.append("codigoBarra", materialData.codigoBarra || "");
+// Servicio actualizado para actualizar material con mejor manejo de `imageUrl`
+export const updateMaterial = async (id, formData) => {
+  try {
+      // Comprueba si hay una imagen en el FormData
+      if (!formData.has("image") && !formData.has("imageUrl")) {
+          // Si no hay una nueva imagen y ya existe imageUrl, no envíes `imageUrl` para evitar que el backend lo sobrescriba
+          formData.append("retainImage", true); // Envia un flag opcional
+      }
 
-        // Agrega el archivo de imagen solo si está presente
-        if (materialData.imageFile) {
-            formData.append("imageFile", materialData.imageFile);
-        }
-
-        const response = await axios.put(`/material/${id}`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            }
-        });
-
-        if (response.status === 200) {
-            toast.success('Material actualizado con éxito');
-            return response.data;
-        }
-    } catch (error) {
-        console.error('Error al editar el Material/Herramienta:', error);
-        const errorMessage = error.response?.data?.message || 'Error desconocido al editar el material';
-        toast.error(errorMessage);
-        throw error;
-    }
+      const response = await axios.put(`/material/${id}`, formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data',
+          },
+      });
+      
+      if (response.status === 200) {
+          toast.success('Material actualizado con éxito');
+          return response.data;
+      }
+  } catch (error) {
+      console.error('Error al editar el Material/Herramienta:', error);
+      const errorMessage = error.response?.data?.message || 'Error desconocido al editar el material';
+      toast.error(errorMessage);
+      throw error;
+  }
 };
+
 
 // Eliminar un material
 export const deleteMaterial = async (id) => {

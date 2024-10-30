@@ -11,7 +11,7 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
         tipo: '',
         unidad: '',
         codigoBarra: '',
-        imageFile: null, // Campo para almacenar la imagen
+        image: null,
     });
 
     const handleInputChange = (e) => {
@@ -25,14 +25,29 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Evita el envío automático al presionar Enter
+            e.preventDefault();
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await createMaterial(material);
+            const formData = new FormData();
+            formData.append("nombre", material.nombre);
+            formData.append("descripcion", material.descripcion);
+            formData.append("tipo", material.tipo);
+            formData.append("unidad", material.unidad);
+            
+            // Solo agregar el código de barras si tiene algún valor
+            if (material.codigoBarra) {
+                formData.append("codigoBarra", material.codigoBarra);
+            }
+            
+            if (material.image) {
+                formData.append("image", material.image);
+            }
+    
+            await createMaterial(formData);
             toast.success('Material/Herramienta creado con éxito');
             setMaterial({
                 nombre: '',
@@ -40,14 +55,15 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
                 tipo: '',
                 unidad: '',
                 codigoBarra: '',
-                imageFile: null,
+                image: null,
             });
+            onClose();
         } catch (error) {
             console.error('Error al crear Material/Herramienta:', error);
             toast.error('Error al crear Material/Herramienta');
         }
     };
-
+    
     return (
         <Modal
             isOpen={isOpen}
@@ -94,7 +110,7 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
                         name="codigoBarra"
                         value={material.codigoBarra}
                         onChange={handleInputChange}
-                        onKeyPress={handleKeyPress} // Evita el envío con Enter
+                        onKeyPress={handleKeyPress}
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700"
                         autoComplete="off"
                     />
@@ -146,12 +162,20 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Imagen (Opcional)</label>
-                    <input
-                        type="file"
-                        name="image"
-                        onChange={handleFileChange}
-                        className="mt-1 block w-full text-gray-700"
-                    />
+                    <div className="relative">
+                        <input
+                            type="file"
+                            name="image"
+                            onChange={handleFileChange}
+                            className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                        />
+                        <button
+                            type="button"
+                            className="bg-gray-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-500"
+                        >
+                            Seleccionar archivo
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <button
@@ -162,7 +186,7 @@ const ModalAddMaterial = ({ isOpen, onClose }) => {
                     </button>
                     <button
                         onClick={onClose}
-                        className="bg-gray-700 hover:bg-gray-500 py-2 px-4 rounded-md"
+                        className="bg-gray-600 hover:bg-gray-500 py-2 px-4 rounded-md text-white"
                     >
                         Cancelar
                     </button>

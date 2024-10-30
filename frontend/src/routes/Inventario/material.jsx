@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { getMaterial, deleteMaterial, getMaterialById, updateMaterial } from "../../services/material.service";
+import { getMaterial, deleteMaterial, getMaterialById } from "../../services/material.service";
 import ModalAddMaterial from "./ModalAddMaterial";
-import ModalEditMaterial from "./ModalEditMaterial"; // Importa el modal de edición
+import ModalEditMaterial from "./ModalEditMaterial"; 
+import Modal from 'react-modal'; // Importa Modal para el modal de confirmación
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -9,7 +10,9 @@ const Material = () => {
     const [material, setMaterial] = useState([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [selectedMaterial, setSelectedMaterial] = useState(null); // Almacena el material a editar
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedMaterial, setSelectedMaterial] = useState(null);
+    const [materialToDelete, setMaterialToDelete] = useState(null); // Almacena el material a eliminar
 
     useEffect(() => {
         fetchMaterialData();
@@ -38,7 +41,7 @@ const Material = () => {
     const openEditModal = async (id) => {
         try {
             const materialData = await getMaterialById(id);
-            setSelectedMaterial(materialData); // Configura el material seleccionado
+            setSelectedMaterial(materialData);
             setIsEditModalOpen(true);
         } catch (error) {
             console.error('Error al obtener el material:', error);
@@ -52,17 +55,27 @@ const Material = () => {
         fetchMaterialData();
     };
 
-    const handleDelete = async (id) => {
-        const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este material?");
-        if (confirmDelete) {
+    const openDeleteModal = (id) => {
+        setMaterialToDelete(id);
+        setIsDeleteModalOpen(true);
+    };
+
+    const closeDeleteModal = () => {
+        setIsDeleteModalOpen(false);
+        setMaterialToDelete(null);
+    };
+
+    const confirmDelete = async () => {
+        if (materialToDelete) {
             try {
-                await deleteMaterial(id);
+                await deleteMaterial(materialToDelete);
                 toast.success("Material eliminado con éxito");
                 fetchMaterialData();
             } catch (error) {
                 console.error("Error al eliminar material:", error);
                 toast.error("Error al eliminar material");
             }
+            closeDeleteModal();
         }
     };
 
@@ -87,11 +100,33 @@ const Material = () => {
                 <ModalEditMaterial
                     isOpen={isEditModalOpen}
                     onClose={closeEditModal}
-                    material={selectedMaterial} // Pasa el material seleccionado al modal
+                    material={selectedMaterial}
                 />
             )}
 
-            {/* Tabla para listar los materiales */}
+            <Modal
+                isOpen={isDeleteModalOpen}
+                onRequestClose={closeDeleteModal}
+                contentLabel="Confirmación de Eliminación"
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-2xl rounded-md p-5 w-full sm:w-1/2 md:w-1/3"
+            >
+                <h3 className="text-lg font-bold text-gray-900 mb-4">¿Estás seguro de que deseas eliminar este material?</h3>
+                <div className="flex justify-center space-x-4">
+                    <button
+                        onClick={closeDeleteModal}
+                        className="bg-gray-500 hover:bg-gray-400 text-white py-2 px-4 rounded-md"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        onClick={confirmDelete}
+                        className="bg-gray-600 hover:bg-gray-500 text-white py-2 px-4 rounded-md"
+                    >
+                        Eliminar
+                    </button>
+                </div>
+            </Modal>
+
             <div className="shadow-lg rounded-lg overflow-x-auto">
                 <table className="min-w-full table-auto">
                     <thead>
@@ -124,7 +159,7 @@ const Material = () => {
                                                 />
                                             </button>
                                             <button 
-                                                onClick={() => handleDelete(item._id)} 
+                                                onClick={() => openDeleteModal(item._id)} 
                                                 className="bg-gray-600 hover:bg-gray-500 transition-all py-1 px-2 rounded-md"
                                             >
                                                 <img 

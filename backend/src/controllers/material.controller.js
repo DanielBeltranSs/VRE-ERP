@@ -35,7 +35,7 @@ async function getMaterial(req, res) {
   }
 }
 
-// Crear un nuevo material con imagen opcional
+// Crear un nuevo material con validación de código de barras único
 async function createMaterial(req, res) {
   try {
       console.log("Body received:", req.body);
@@ -45,21 +45,30 @@ async function createMaterial(req, res) {
       const { error: bodyError } = materialBodySchema.validate(body);
       if (bodyError) return respondError(req, res, 400, bodyError.message);
 
+      // Verificar si el código de barras ya existe, solo si se proporciona uno
+      if (body.codigoBarra) {
+          const [existingMaterial, error] = await materialService.getMaterialByBarcode(body.codigoBarra);
+          if (existingMaterial) {
+              return respondError(req, res, 400, "El código de barras ya está asociado a otro material.");
+          }
+      }
+
       // Si hay archivo, añade la URL de la imagen
       if (req.file) {
           body.imageUrl = `/uploads/${req.file.filename}`;
       }
 
-      const [newMaterial, error] = await materialService.createMaterial(body);
-      if (error) return respondError(req, res, 400, error);
+      const [newMaterial, errorCreating] = await materialService.createMaterial(body);
+      if (errorCreating) return respondError(req, res, 400, errorCreating);
 
       respondSuccess(req, res, 201, newMaterial);
   } catch (error) {
-      console.error("Error en createMaterial:", error); // Log del error completo
+      console.error("Error en createMaterial:", error);
       handleError(error, "Material.controller -> createMaterial");
       respondError(req, res, 500, "No se pudo crear el material");
   }
 }
+
 
 
 // Obtener un material por ID
@@ -80,19 +89,36 @@ async function getMaterialById(req, res) {
   }
 }
 
-// Actualizar un material con imagen opcional
+// Actualizar un material con validación de código de barras único
 async function updateMaterial(req, res) {
   try {
     const { params, body } = req;
     const { error: paramsError } = materialId.validate(params);
     if (paramsError) return respondError(req, res, 400, paramsError.message);
 
-    if (req.file) {
-      body.imageUrl = `/uploads/${req.file.filename}`;
+    // Obtenemos el material actual
+    const [currentMaterial, errorFetching] = await materialService.getMaterialById(params.id);
+    if (errorFetching) return respondError(req, res, 404, errorFetching);
+
+    // Verificar si el código de barras ya existe y es diferente al actual
+    if (body.codigoBarra && body.codigoBarra !== currentMaterial.codigoBarra) {
+      const [existingMaterial, error] = await materialService.getMaterialByBarcode(body.codigoBarra);
+      if (existingMaterial) {
+        return respondError(req, res, 400, "El código de barras ya está asociado a otro material.");
+      }
     }
 
-    const [updatedMaterial, error] = await materialService.updateMaterial(params.id, body);
-    if (error) return respondError(req, res, 404, error);
+    // Log para verificar si `imageUrl` se recibe cuando no hay nueva imagen
+    console.log("Contenido del body antes de actualizar:", body);
+
+    if (req.file) {
+      body.imageUrl = `/uploads/${req.file.filename}`;
+    } else if (body.retainImage) {
+      delete body.imageUrl;
+    }
+
+    const [updatedMaterial, updateError] = await materialService.updateMaterial(params.id, body);
+    if (updateError) return respondError(req, res, 404, updateError);
 
     respondSuccess(req, res, 200, updatedMaterial);
   } catch (error) {
@@ -100,6 +126,7 @@ async function updateMaterial(req, res) {
     respondInternalError(req, res);
   }
 }
+
 
 // Eliminar un material
 async function deleteMaterial(req, res) {
@@ -140,5 +167,5 @@ module.exports = {
   updateMaterial,
   deleteMaterial,
   getMaterialByBarcode,
-  upload, // Exportar `upload` para manejo de archivos
+  upload,
 };

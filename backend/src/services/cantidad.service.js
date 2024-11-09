@@ -148,17 +148,14 @@ async function restarCantidadmiddlewere(body) {
     }
 }
 
-async function restarCantidad(body) {
+async function restarCantidad(id,body) {
     try {
-        const { inventario, cantidad } = body;
-        const id  = inventario;
+        const {cantidad} = body;
         const materialFound = await Cantidad.findById(id)
             .exec();
         if (!materialFound) return [null, "El Material no existe"];
         const cantidadParsed = Number(cantidad);
         const cantidadActual = Number(materialFound.cantidad);
-
-        if (cantidadActual < cantidadParsed) return [null, "No hay suficiente cantidad"];
 
         const cantidadUpdated = await Cantidad.findByIdAndUpdate(
             id,
@@ -173,6 +170,7 @@ async function restarCantidad(body) {
         handleError(error, "Cantidad.service -> restarCantidad");
     }
 }
+
 
 async function sumarCantidad(id,body) {
     try {

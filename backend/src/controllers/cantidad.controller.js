@@ -92,19 +92,6 @@ async function deleteCantidad(req, res) {
   }
 }
 
-async function restarCantidad(req, res) {
-  try {
-    const { body } = req;
-
-    const [cantidad, errorCantidad] = await CantidadService.restarCantidad(body);
-    if (errorCantidad) return respondError(req, res, 404, errorCantidad);
-
-    respondSuccess(req, res, 200, cantidad);
-  } catch (error) {
-    handleError(error, "Cantidad.controller -> restarCantidad");
-    respondInternalError(req, res);
-  }
-}
 
 async function getCantidadByMaterial(req, res) {
   try {
@@ -157,6 +144,25 @@ async function sumarCantidad(req, res) {
     respondInternalError(req, res);
   }
 }
+
+async function restarCantidad(req, res) {
+  try {
+    const { params, body } = req;
+    const { error: paramsError } = cantidadIdSchema.validate(params);
+    if (paramsError) return respondError(req, res, 400, paramsError.message);
+
+    const { id } = params;
+
+    const [cantidad, errorCantidad] = await CantidadService.restarCantidad(id, body);
+    if (errorCantidad) return respondError(req, res, 404, errorCantidad);
+
+    respondSuccess(req, res, 200, cantidad);
+  } catch (error) {
+    handleError(error, "Cantidad.controller -> restarCantidad");
+    respondInternalError(req, res);
+  }
+}
+
 
 module.exports = {
     getCantidad,

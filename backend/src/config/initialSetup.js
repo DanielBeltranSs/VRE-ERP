@@ -44,12 +44,14 @@ async function createUsers() {
       new User({
         username: "user",
         email: "user@email.com",
+        rut: "12345678-k",
         password: await User.encryptPassword("user123"),
         roles: user._id,
       }).save(),
       new User({
         username: "admin",
         email: "admin@email.com",
+        rut: "12348678-k",
         password: await User.encryptPassword("admin123"),
         roles: admin._id,
       }).save(),

@@ -20,6 +20,10 @@ function PageRoot() {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleMenuClose = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
       {/* Barra superior */}
@@ -59,26 +63,26 @@ function PageRoot() {
           <nav className="flex-grow mt-40">
             <ul>
               <li>
-                <Link to="/" className="block py-2.5 px-4 rounded hover:bg-gray-700">Inicio</Link>
+                <Link to="/" className="block py-2.5 px-4 rounded hover:bg-gray-700" onClick={handleMenuClose}>Inicio</Link>
               </li>
               <li>
-                <Link to="/foro" className="block py-2.5 px-4 rounded hover:bg-gray-700">Foro</Link>
+                <Link to="/foro" className="block py-2.5 px-4 rounded hover:bg-gray-700" onClick={handleMenuClose}>Foro</Link>
               </li>
               {isAdmin && (
                 <li>
-                  <Link to="/proyectos" className="block py-2.5 px-4 rounded hover:bg-gray-700">Proyectos</Link>
+                  <Link to="/proyectos" className="block py-2.5 px-4 rounded hover:bg-gray-700" onClick={handleMenuClose}>Proyectos</Link>
                 </li>
               )}
               <li>
-                <Link to="/asistencia" className="block py-2.5 px-4 rounded hover:bg-gray-700">Asistencia</Link>
+                <Link to="/asistencia" className="block py-2.5 px-4 rounded hover:bg-gray-700" onClick={handleMenuClose}>Asistencia</Link>
               </li>
               {isAdmin && (
                 <>
                   <li>
-                    <Link to="/inventario" className="block py-2.5 px-4 rounded hover:bg-gray-700">Inventario</Link>
+                    <Link to="/inventario" className="block py-2.5 px-4 rounded hover:bg-gray-700" onClick={handleMenuClose}>Inventario</Link>
                   </li>
                   <li>
-                    <Link to="/usuarios" className="block py-2.5 px-4 rounded hover:bg-gray-700">Usuarios</Link>
+                    <Link to="/usuarios" className="block py-2.5 px-4 rounded hover:bg-gray-700" onClick={handleMenuClose}>Usuarios</Link>
                   </li>
                 </>
               )}

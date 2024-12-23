@@ -19,6 +19,11 @@ const AttendanceForm = () => {
   const [endDate, setEndDate] = useState('');
   const [workHours, setWorkHours] = useState(null);
   const [workUserInfo, setWorkUserInfo] = useState({});
+  const [absencesCount, setAbsencesCount] = useState(0);
+
+  const formatDateTime = (dateTime) => {
+    return dateTime ? format(new Date(dateTime), 'dd/MM/yyyy HH:mm:ss') : 'N/A';
+  };
 
   useEffect(() => {
     if (user && user.rut) {
@@ -48,13 +53,40 @@ const AttendanceForm = () => {
   const fetchAttendanceRecords = async () => {
     try {
       const response = await attendanceService.getAttendanceRecords(searchRut, startDate, endDate);
-      const formattedRecords = response.records.map(record => ({
-        ...record,
-        date: format(new Date(record.checkIn), 'dd/MM/yyyy'),
-        checkIn: format(new Date(record.checkIn), 'HH:mm:ss'),
-        checkOut: format(new Date(record.checkOut), 'HH:mm:ss'),
-      }));
-      setAttendanceRecords(formattedRecords);
+      const recordsMap = new Map();
+
+      response.records.forEach(record => {
+        const date = format(new Date(record.checkIn), 'yyyy-MM-dd');
+        recordsMap.set(date, {
+          ...record,
+          date: format(new Date(record.checkIn), 'dd/MM/yyyy'),
+          checkIn: format(new Date(record.checkIn), 'HH:mm:ss'),
+          checkOut: record.checkOut ? format(new Date(record.checkOut), 'HH:mm:ss') : null,
+        });
+      });
+
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const allDates = [];
+      const inasistencias = [];
+
+      for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
+        const formattedDate = format(date, 'yyyy-MM-dd');
+        if (recordsMap.has(formattedDate)) {
+          allDates.push(recordsMap.get(formattedDate));
+        } else {
+          inasistencias.push(format(date, 'dd/MM/yyyy'));
+          allDates.push({
+            date: format(date, 'dd/MM/yyyy'),
+            checkIn: 'Inasistencia',
+            checkOut: 'Inasistencia',
+          });
+        }
+      }
+
+      setAttendanceRecords(allDates);
+      setAbsencesCount(inasistencias.length);
+      toast.success('Registros de asistencia actualizados');
     } catch (error) {
       console.error('Error fetching attendance records:', error);
       toast.error('Error fetching attendance records.');
@@ -63,15 +95,18 @@ const AttendanceForm = () => {
 
   const fetchWorkHours = async () => {
     try {
-      const response = await attendanceService.getAttendanceRecords(searchRut, startDate, endDate);
-      const totalHours = response.records.reduce((total, record) => {
-        const checkIn = new Date(record.checkIn);
-        const checkOut = new Date(record.checkOut);
-        const hours = (checkOut - checkIn) / 1000 / 3600;
-        return total + hours;
+      await fetchAttendanceRecords();
+      const totalHours = attendanceRecords.reduce((total, record) => {
+        if (record.checkIn !== 'Inasistencia') {
+          const checkIn = new Date(record.checkIn);
+          const checkOut = new Date(record.checkOut || checkIn);
+          const hours = (checkOut - checkIn) / 1000 / 3600;
+          return total + hours;
+        }
+        return total;
       }, 0);
       setWorkHours(totalHours.toFixed(2));
-      setWorkUserInfo(response.user);
+      setWorkUserInfo(user);
     } catch (error) {
       console.error('Error calculating work hours:', error);
       toast.error('Error calculating work hours.');
@@ -110,10 +145,6 @@ const AttendanceForm = () => {
     return url.startsWith('http') ? url : `${import.meta.env.VITE_BASE_URL}${url}`;
   };
 
-  const formatDateTime = (dateTime) => {
-    return dateTime ? format(new Date(dateTime), 'dd/MM/yyyy HH:mm:ss') : 'N/A';
-  };
-
   const generatePDF = () => {
     try {
       const doc = new jsPDF();
@@ -125,27 +156,23 @@ const AttendanceForm = () => {
       doc.text(`Name: ${username}`, 10, 60);
       doc.text(`Email: ${email}`, 10, 70);
       doc.text(`Worked Hours: ${workHours} hours`, 10, 80);
+      doc.text(`Days Absent: ${absencesCount} days`, 10, 90);
 
       doc.setFontSize(14);
-      doc.text('Attendance Records:', 10, 100);
+      doc.text('Attendance Records:', 10, 110);
 
       const tableColumn = ['Date', 'Check-in', 'Check-out'];
       const tableRows = [];
 
       attendanceRecords.forEach(record => {
-        const recordData = [
-          record.date,
-          record.checkIn,
-          record.checkOut
-        ];
-        tableRows.push(recordData);
+        tableRows.push([record.date, record.checkIn, record.checkOut]);
       });
 
       doc.autoTable({
         head: [tableColumn],
         body: tableRows,
-        startY: 110,
-        theme: 'grid'
+        startY: 120,
+        theme: 'grid',
       });
 
       doc.save('attendance_report.pdf');

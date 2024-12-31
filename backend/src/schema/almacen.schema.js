@@ -35,12 +35,12 @@ const almacenBodySchema = Joi.object({
         "string.max": "La ubicacion es muy grande.",
         "string.pattern.base": "La ubicacion no puede ser solo números.",
     }),
-    fono: Joi.number().positive().min(0).max(999999999).integer().required().messages({
+    fono: Joi.number().positive().min(8).max(99999999999).integer().required().messages({
         "number.empty": "El numero no puede estar vacío.",
         "any.required": "El numero es obligatorio.",
         "number.base": "El numero debe ser de tipo numérico.",
         "number.positive": "El numero debe ser un número positivo.",
-        "number.min": "El numero debe ser mayor o igual a cero.",
+        "number.min": "El numero debe ser mayor o igual a ocho.",
         "number.max": "El numero es muy grande.",
         "number.integer": "El numero debe ser un número entero.",
     }),

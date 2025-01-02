@@ -63,12 +63,12 @@ function AgregarProyecto({ onProyectoAdded }) {
 
     const formattedProyecto = {
       ...proyectoData,
-      fecha_inicio: proyectoData.fecha_inicio ? format(proyectoData.fecha_inicio, 'dd/MM/yy') : null,
-      fecha_termino: proyectoData.fecha_termino ? format(proyectoData.fecha_termino, 'dd/MM/yy') : null,
+      fecha_inicio: proyectoData.fecha_inicio ? format(proyectoData.fecha_inicio, 'yyyy-MM-dd') : null,
+      fecha_termino: proyectoData.fecha_termino ? format(proyectoData.fecha_termino, 'yyyy-MM-dd') : null,
       actividades: proyectoData.actividades.map((actividad) => ({
         ...actividad,
-        fecha_inicio: actividad.fecha_inicio ? format(actividad.fecha_inicio, 'dd/MM/yy') : null,
-        fecha_termino: actividad.fecha_termino ? format(actividad.fecha_termino, 'dd/MM/yy') : null,
+        fecha_inicio: actividad.fecha_inicio ? format(actividad.fecha_inicio, 'yyyy-MM-dd') : null,
+        fecha_termino: actividad.fecha_termino ? format(actividad.fecha_termino, 'yyyy-MM-dd') : null,
       }))
     };
 
@@ -130,7 +130,7 @@ function AgregarProyecto({ onProyectoAdded }) {
           <DatePicker
             selected={proyectoData.fecha_inicio}
             onChange={(date) => handleProyectoDateChange(date, 'fecha_inicio')}
-            dateFormat="dd/MM/yy"
+            dateFormat="yyyy-MM-dd"
             className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
             required
           />
@@ -140,7 +140,7 @@ function AgregarProyecto({ onProyectoAdded }) {
           <DatePicker
             selected={proyectoData.fecha_termino}
             onChange={(date) => handleProyectoDateChange(date, 'fecha_termino')}
-            dateFormat="dd/MM/yy"
+            dateFormat="yyyy-MM-dd"
             className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
             required
           />

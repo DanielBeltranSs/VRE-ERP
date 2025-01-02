@@ -141,7 +141,7 @@ const ModificarProyecto = () => {
 
     return (
         <div className="container mx-auto p-4 max-w-4xl">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center md:text-left">Modificar Proyecto</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center md:text-left">Mdodificar Proyecto</h1>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                     <label htmlFor="proyectoSelect" className="block text-sm font-medium text-gray-700">Seleccionar Proyecto</label>
@@ -238,8 +238,7 @@ const ModificarProyecto = () => {
 
                 <button
                     type="submit"
-                    className="w-full md:w-auto py-2 px-4 mt-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray
-                    -500"
+                    className="w-full md:w-auto py-2 px-4 mt-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                 >
                     Modificar Proyecto
                 </button>

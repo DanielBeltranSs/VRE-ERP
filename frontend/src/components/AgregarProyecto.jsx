@@ -13,7 +13,7 @@ function AgregarProyecto({ onProyectoAdded }) {
     fecha_inicio: null,
     fecha_termino: null,
     presupuesto: '',
-    actividades: []
+    actividades: [],
   });
 
   const [actividadData, setActividadData] = useState({
@@ -25,29 +25,46 @@ function AgregarProyecto({ onProyectoAdded }) {
     estado: false,
   });
 
+  // Manejo de cambio en los inputs del proyecto
   const handleProyectoInputChange = (e) => {
     const { name, value } = e.target;
     setProyectoData({ ...proyectoData, [name]: value });
   };
 
+  // Manejo de cambio en los inputs de actividad
   const handleActividadInputChange = (e) => {
     const { name, value } = e.target;
     setActividadData({ ...actividadData, [name]: value });
   };
 
+  // Manejo de fechas del proyecto
   const handleProyectoDateChange = (date, field) => {
     setProyectoData({ ...proyectoData, [field]: date });
   };
 
+  // Manejo de fechas de actividad
   const handleActividadDateChange = (date, field) => {
     setActividadData({ ...actividadData, [field]: date });
   };
 
+  // Agregar actividad al proyecto
   const agregarActividad = () => {
+    if (!actividadData.nombre || !actividadData.fecha_inicio || !actividadData.fecha_termino) {
+      toast.error('Por favor, completa todos los campos de la actividad.');
+      return;
+    }
+
+    if (actividadData.fecha_inicio >= actividadData.fecha_termino) {
+      toast.error('La fecha de inicio de la actividad debe ser anterior a la fecha de término.');
+      return;
+    }
+
     setProyectoData({
       ...proyectoData,
-      actividades: [...proyectoData.actividades, actividadData]
+      actividades: [...proyectoData.actividades, actividadData],
     });
+
+    // Reiniciar los campos de actividad
     setActividadData({
       nombre: '',
       descripcion: '',
@@ -58,27 +75,42 @@ function AgregarProyecto({ onProyectoAdded }) {
     });
   };
 
+  // Manejo del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!proyectoData.fecha_inicio || !proyectoData.fecha_termino || proyectoData.fecha_inicio >= proyectoData.fecha_termino) {
+      toast.error('Las fechas del proyecto son inválidas.');
+      return;
+    }
+
     const formattedProyecto = {
       ...proyectoData,
-      fecha_inicio: proyectoData.fecha_inicio ? format(proyectoData.fecha_inicio, 'dd/MM/yy') : null,
-      fecha_termino: proyectoData.fecha_termino ? format(proyectoData.fecha_termino, 'dd/MM/yy') : null,
+      fecha_inicio: proyectoData.fecha_inicio ? format(proyectoData.fecha_inicio, 'yyyy-MM-dd') : null,
+      fecha_termino: proyectoData.fecha_termino ? format(proyectoData.fecha_termino, 'yyyy-MM-dd') : null,
       actividades: proyectoData.actividades.map((actividad) => ({
         ...actividad,
-        fecha_inicio: actividad.fecha_inicio ? format(actividad.fecha_inicio, 'dd/MM/yy') : null,
-        fecha_termino: actividad.fecha_termino ? format(actividad.fecha_termino, 'dd/MM/yy') : null,
-      }))
+        fecha_inicio: actividad.fecha_inicio ? format(actividad.fecha_inicio, 'yyyy-MM-dd') : null,
+        fecha_termino: actividad.fecha_termino ? format(actividad.fecha_termino, 'yyyy-MM-dd') : null,
+      })),
     };
 
     try {
       await createProyecto(formattedProyecto);
-      toast.success('Proyecto agregado con éxito');
-      onProyectoAdded(formattedProyecto);
+      toast.success('Proyecto agregado con éxito.');
+      onProyectoAdded && onProyectoAdded(formattedProyecto);
+      setProyectoData({
+        titulo: '',
+        descripcion: '',
+        empresa_licitante: '',
+        fecha_inicio: null,
+        fecha_termino: null,
+        presupuesto: '',
+        actividades: [],
+      });
     } catch (error) {
-      console.error('Error al agregar el proyecto', error.response ? error.response.data : error.message);
-      toast.error('Hubo un error al agregar el proyecto. Por favor, inténtelo de nuevo.');
+      console.error('Error al agregar el proyecto:', error.response?.data || error.message);
+      toast.error('Hubo un error al agregar el proyecto. Por favor, inténtalo de nuevo.');
     }
   };
 
@@ -130,7 +162,7 @@ function AgregarProyecto({ onProyectoAdded }) {
           <DatePicker
             selected={proyectoData.fecha_inicio}
             onChange={(date) => handleProyectoDateChange(date, 'fecha_inicio')}
-            dateFormat="dd/MM/yy"
+            dateFormat="yyyy-MM-dd"
             className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
             required
           />
@@ -140,7 +172,7 @@ function AgregarProyecto({ onProyectoAdded }) {
           <DatePicker
             selected={proyectoData.fecha_termino}
             onChange={(date) => handleProyectoDateChange(date, 'fecha_termino')}
-            dateFormat="dd/MM/yy"
+            dateFormat="yyyy-MM-dd"
             className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
             required
           />
@@ -188,7 +220,7 @@ function AgregarProyecto({ onProyectoAdded }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label htmlFor="fecha_inicio_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Inicio de la Actividad:</label>
+            <label htmlFor="fecha_inicio_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Inicio:</label>
             <DatePicker
               selected={actividadData.fecha_inicio}
               onChange={(date) => handleActividadDateChange(date, 'fecha_inicio')}
@@ -197,7 +229,7 @@ function AgregarProyecto({ onProyectoAdded }) {
             />
           </div>
           <div>
-            <label htmlFor="fecha_termino_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Término de la Actividad:</label>
+            <label htmlFor="fecha_termino_actividad" className="block text-gray-700 font-medium mb-2">Fecha de Término:</label>
             <DatePicker
               selected={actividadData.fecha_termino}
               onChange={(date) => handleActividadDateChange(date, 'fecha_termino')}
@@ -205,32 +237,6 @@ function AgregarProyecto({ onProyectoAdded }) {
               className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
             />
           </div>
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="responsable" className="block text-gray-700 font-medium mb-2">Responsable:</label>
-          <input
-            type="text"
-            id="responsable"
-            name="responsable"
-            value={actividadData.responsable}
-            onChange={handleActividadInputChange}
-            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="estado" className="block text-gray-700 font-medium mb-2">Estado:</label>
-          <select
-            id="estado"
-            name="estado"
-            value={actividadData.estado}
-            onChange={handleActividadInputChange}
-            className="p-2 border border-gray-300 rounded-md shadow-sm w-full bg-white text-black"
-          >
-            <option value={false}>Incompleto</option>
-            <option value={true}>Completo</option>
-          </select>
         </div>
 
         <button

@@ -11,14 +11,6 @@ const EditarAlmacen = () => {
         ubicacion: '',
         fono: '',
     });
-    
-    const handleUpdate = (e) => {
-        const shouldUpdate = window.confirm('¿Estás seguro de que deseas editar el Almacen?');
-
-        if (shouldUpdate) {
-            handleSubmit(e);
-        }
-    };
 
     useEffect(() => {
         if (id) {
@@ -36,8 +28,8 @@ const EditarAlmacen = () => {
             };
             setAlmacen(newI);
         } catch (error) {
-            console.error('Error al obtener los detalles del inventario', error);
-            toast.error('Hubo un error al obtener los detalles del inventario');
+            console.error('Error al obtener los detalles del almacén', error);
+            toast.error('Hubo un error al obtener los detalles del almacén');
             navigate('/inventario/almacen');
         }
     };
@@ -47,11 +39,14 @@ const EditarAlmacen = () => {
         setAlmacen({ ...almacen, [name]: value });
     };
 
-    const handleSubmit = async (e) => {
+    const handleUpdate = async (e) => {
         e.preventDefault();
+
+        toast.info('Modificando el Almacén...');
+
         try {
             await updateAlmacen(id, almacen);
-            toast.success('Almacen modificado exitosamente');
+            toast.success('Almacén modificado exitosamente');
             navigate('/inventario/almacen');
             setAlmacen({
                 nombre: '',
@@ -59,8 +54,8 @@ const EditarAlmacen = () => {
                 fono: '',
             });
         } catch (error) {
-            console.error('Error al modificar el almacen:', error);
-            toast.error('Hubo un error al modificar el almacen');
+            console.error('Error al modificar el almacén:', error);
+            toast.error('Hubo un error al modificar el almacén');
         }
     };
 
@@ -68,15 +63,15 @@ const EditarAlmacen = () => {
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <div className="w-full max-w-lg bg-white shadow-lg rounded-lg p-6">
                 <div className="mb-4 text-gray-800">
-                    <h2 className="text-xl font-bold text-center">Editar Almacen</h2>
+                    <h2 className="text-xl font-bold text-center">Editar Almacén</h2>
                 </div>
                 <form onSubmit={handleUpdate} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Nombre</label>
                         <input
                             type="text"
-                            id='nombre'
-                            name='nombre'
+                            id="nombre"
+                            name="nombre"
                             value={almacen.nombre}
                             onChange={handleInputChange}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 bg-gray-100 text-gray-700"
@@ -86,8 +81,8 @@ const EditarAlmacen = () => {
                         <label className="block text-sm font-medium text-gray-700">Ubicación</label>
                         <input
                             type="text"
-                            id='ubicacion'
-                            name='ubicacion'
+                            id="ubicacion"
+                            name="ubicacion"
                             value={almacen.ubicacion}
                             onChange={handleInputChange}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 bg-gray-100 text-gray-700"
@@ -97,8 +92,8 @@ const EditarAlmacen = () => {
                         <label className="block text-sm font-medium text-gray-700">Teléfono</label>
                         <input
                             type="number"
-                            id='fono'
-                            name='fono'
+                            id="fono"
+                            name="fono"
                             value={almacen.fono}
                             onChange={handleInputChange}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 bg-gray-100 text-gray-700"
@@ -107,18 +102,19 @@ const EditarAlmacen = () => {
                     <div className="flex justify-end space-x-2">
                         <button
                             type="submit"
-                            className="bg-gray-500 hover:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none"
+                            className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none"
                         >
                             Modificar
                         </button>
                         <button
+                            type="button"
                             onClick={() => navigate('/inventario/almacen')}
                             className="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded-md focus:outline-none"
                         >
                             Cancelar
                         </button>
                     </div>
-                </form>                
+                </form>
             </div>
         </div>
     );

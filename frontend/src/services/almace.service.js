@@ -53,15 +53,14 @@ export const updateAlmacen = async (id, publicacion) => {
     }
 }
 
-export const deleteAlmacen= async (id) => {
-    try {
+export const deleteAlmacen = async (id) => {
+  try {
       const response = await axios.delete(`/almacen/${id}`);
-  
       if (response.status === 200) {
-        return response.data;
+          return response.data;
       }
-    } catch (error) {
+  } catch (error) {
       console.error(error);
       throw error;
-    }
+  }
 }

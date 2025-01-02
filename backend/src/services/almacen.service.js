@@ -83,13 +83,17 @@ if (almacenFounded) {
 async function deleteAlmacen(id) {
     try {
         const almacenFound = await Almacen.findById(id);
-        if (!almacenFound) return [null, "El almacen no existe"];
+        if (!almacenFound) return [null, "El almacén no existe"];
 
-        return await Almacen.findByIdAndDelete(id);
+        await Almacen.findByIdAndDelete(id);
+
+        return ["Almacén eliminado correctamente", null];
     } catch (error) {
         handleError(error, "Almacen.service -> deleteAlmacen");
+        return [null, error.message]; // Devuelve el error como parte del array
     }
 }
+
 
 module.exports = {
     getAlmacen,

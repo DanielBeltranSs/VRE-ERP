@@ -82,15 +82,19 @@ async function deleteAlmacen(req, res) {
     if (paramsError) return respondError(req, res, 400, paramsError.message);
 
     const { id } = params;
-    const [Almacen, errorAlmacen] = await AlmacenService.deleteAlmacen(id);
+
+    const [result, errorAlmacen] = await AlmacenService.deleteAlmacen(id);
+
     if (errorAlmacen) return respondError(req, res, 404, errorAlmacen);
 
-    respondSuccess(req, res, 200, Almacen);
+    respondSuccess(req, res, 200, result);
   } catch (error) {
+    console.error("Error en deleteAlmacen:", error.message);
     handleError(error, "Almacen.controller -> deleteAlmacen");
     respondInternalError(req, res);
   }
 }
+
 
 module.exports = {
     getAlmacen,

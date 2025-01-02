@@ -128,19 +128,20 @@ async function deleteProyecto(req, res) {
 // Obtener un proyecto por ID
 async function getProyectoById(req, res) {
   try {
-    const { id } = req.params;
+      const { id } = req.params;
+      const proyecto = await Proyecto.findById(id);
 
-    const proyecto = await Proyecto.findById(id);
-    if (!proyecto) {
-      return res.status(404).json({ message: "Proyecto no encontrado" });
-    }
+      if (!proyecto) {
+          return res.status(404).json({ message: 'Proyecto no encontrado' });
+      }
 
-    respondSuccess(req, res, 200, proyecto);
+      return res.status(200).json(proyecto);
   } catch (error) {
-    handleError(error, "proyectos.controller -> getProyectoById");
-    respondError(req, res, 500, "Error al obtener el proyecto");
+      handleError(error, "proyecto.controller -> getProyectoById");
+      return res.status(500).json({ message: 'Error al obtener la publicación' });
   }
 }
+
 
 // Actualizar el estado de una actividad
 async function updateActividadEstado(req, res) {

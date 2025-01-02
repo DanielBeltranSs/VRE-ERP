@@ -46,6 +46,7 @@ const ModificarProyecto = () => {
     const obtenerProyectoSeleccionado = async (projectId) => {
         try {
             const response = await obtenerProyectoById(projectId);
+            console.log('Datos recibidos del proyecto:', response);
             setProyectoData({
                 ...response,
                 fecha_inicio: response.fecha_inicio ? formatDateForInput(response.fecha_inicio) : '',
@@ -56,15 +57,19 @@ const ModificarProyecto = () => {
             navigate('/proyectos/error');
         }
     };
+    
 
     const handleSelectChange = async (event) => {
         const projectId = event.target.value;
+        console.log('ID del proyecto seleccionado:', projectId); // Verifica el ID seleccionado
         setSelectedProyecto(projectId);
+    
         if (projectId) {
             await obtenerProyectoSeleccionado(projectId);
             navigate(`/proyectos/modificar/${projectId}`);
         }
     };
+    
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
